@@ -1,6 +1,8 @@
 %{
 	#include <stdio.h>
 	#include <string.h>
+	int comment_error=0;
+	
 
 	struct symboltable
 	{
@@ -173,6 +175,8 @@
 
 %}
 
+DE "define"
+IN "include"
 LEQ <=
 GEQ >=
 EQ =
@@ -186,22 +190,24 @@ REM %
 AND &
 OR \|
 
+
+
+
 %%
+([#!](" ")*({DE}|{IN})(" ")*([<]?)([A-Za-z]+)[.]?([A-Za-z]*)([>]?)(" ")*([A-Za-z0-9]*)) {printf("%s \t- PREPROCESSOR\n", yytext);}
+\/\/(.*) {printf("%s \t- SINGLE LINE COMMENT\n", yytext);}				
+\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/  {printf("%s \t- MULTI LINE COMMENT\n", yytext);}
+([*/]) {comment_error++;}
 [ \n\t] ;
 \".*\"|\'.*\' {printf("%s \t- STRING CONSTANT\n", yytext); insertCT(yytext,"STRING CONSTANT");}
-; {printf("%s \t- SEMICOL DELIMITER\n", yytext);}
+; {printf("%s \t- SEMICOLON DELIMITER\n", yytext);}
 , {printf("%s \t- COMM DELIMITER\n", yytext);}
 \{ {printf("%s \t- OPENING BRACES\n", yytext);}
 \} {printf("%s \t- CLOSING BRACES\n", yytext);}
 \( {printf("%s \t- OPENING BRACKETS\n", yytext);}
 \) {printf("%s \t- CLOSING BRACKETS\n", yytext);}
-# {printf("%s \t- PREPROCESSOR\n", yytext); insertST(yytext, "PREPROCESSOR");}
 \\ {printf("%s \t- FSLASH\n", yytext);}
 \. {printf("%s \t- DOT DELIMITER\n", yytext);}
-\/\/.* {printf("%s \t- SINGLE LINE COMMENT\n", yytext);}
-
-"/*"([^*]|\*+[^*/])*\*+"/" {printf("%s \t- MULTI LINE COMMENT\n", yytext);}
-
 auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|int|long|register|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while|main {printf("%s \t- KEYWORD\n", yytext); insertST(yytext, "KEYBOARD");}
 
 [a-z|A-Z]([a-z|A-Z]|[0-9])* {printf("%s \t- IDENTIFIER\n", yytext); insertST(yytext, "IDENTIFIER");}
@@ -209,9 +215,15 @@ auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for
 [1-9][0-9]*|0 {printf("%s \t- NUMBER CONSTANT\n", yytext); insertCT(yytext, "NUMBER CONSTANT");}
 
 {PLUS}|{MINUS}|{MULT}|{DIV}|{EQ}|{LEQ}|{GEQ}|{LES}|{GRE}|{REM}|{AND}|{OR} {printf("%s \t- OPERATOR\n", yytext);} 
-
 (.?) {printf("%s \t- INVALID\n", yytext);}
+
 %%
+
+
+
+
+
+
 
 int main(){
 
@@ -222,6 +234,12 @@ int main(){
     }
     yyin=fopen("test-1.c","r");
     yylex();
+   
+    if(comment_error !=0)
+    {
+    	printf("Error in comments\n");
+    	return 0;
+    }
     printf("\n\nSYMBOL TABLE\n\n");
     
     printST();
