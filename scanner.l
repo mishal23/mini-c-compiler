@@ -197,7 +197,7 @@ OR \|
 ([#!](" ")*({DE}|{IN})(" ")*([<]?)([A-Za-z]+)[.]?([A-Za-z]*)([>]?)(" ")*([A-Za-z0-9]*)) {printf("%s \t- PREPROCESSOR\n", yytext);}
 \/\/(.*) {printf("%s \t- SINGLE LINE COMMENT\n", yytext);}				
 \/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/  {printf("%s \t- MULTI LINE COMMENT\n", yytext);}
-([*/]) {comment_error++;}
+([*/]) {comment_error++; return 0;}
 [ \n\t] ;
 \".*\"|\'.*\' {printf("%s \t- STRING CONSTANT\n", yytext); insertCT(yytext,"STRING CONSTANT");}
 ; {printf("%s \t- SEMICOLON DELIMITER\n", yytext);}
