@@ -34,9 +34,24 @@
 	{
 		int value = hash(str);
 		if(ST[value].length == 0)
+		    {
 			return 0;
+		    }
 		else if(strcmp(ST[value].name,str)==0)
+		      {	
 		      return 1;
+		      }
+		else
+		    {
+		    	for(int i = value + 1 ; i!=value ; i = (i+1)%1001)
+		    	{
+		    		if(strcmp(ST[i].name,str)==0)
+		    		{
+		    			return 1;
+		    		}
+		    	}
+		    	return 0;
+		    }
 	}
 
 	int lookupCT(char *str)
@@ -46,12 +61,27 @@
 		    return 0;
 		else if(strcmp(CT[value].name,str)==0)
 		      return 1;
+		else
+		    {
+		    	for(int i = value + 1 ; i!=value ; i = (i+1)%1001)
+		    	{
+		    		if(strcmp(CT[i].name,str)==0)
+		    		{
+		    			return 1;
+		    		}
+		    	}
+		    	return 0;
+		    }
+
 	}
 
 	void insertST(char *str1, char *str2)
 	{
+		
 		if(lookupST(str1))
-		return;
+		{
+		    return;
+	    }
 		else
 		{
 			int value = hash(str1);
@@ -60,6 +90,7 @@
 				strcpy(ST[value].name,str1);
 				strcpy(ST[value].type,str2);
 				ST[value].length = strlen(str1);
+				return;
 			}
 
 
@@ -92,6 +123,7 @@
 				strcpy(CT[value].name,str1);
 				strcpy(CT[value].type,str2);
 				CT[value].length = strlen(str1);
+				return;
 			}
 
 
@@ -117,10 +149,13 @@
     	for(int i = 0 ; i < 1001 ; i++)
     	{
     		if(ST[i].length == 0)
+    		{
     		continue;
+    	    }
 
     		printf("%s\t%s\n",ST[i].name, ST[i].type);
     	}
+
     }
 
 
@@ -137,3 +172,64 @@
 
 
 %}
+
+LEQ <=
+GEQ >=
+EQ =
+LES <
+GRE >
+PLUS \+
+MINUS \-
+MULT \*
+DIV \/
+REM %
+AND &
+OR \|
+
+%%
+[ \n\t] ;
+\".*\"|\'.*\' {printf("%s \t- STRING CONSTANT\n", yytext); insertCT(yytext,"STRING CONSTANT");}
+; {printf("%s \t- SEMICOL DELIMITER\n", yytext);}
+, {printf("%s \t- COMM DELIMITER\n", yytext);}
+\{ {printf("%s \t- OPENING BRACES\n", yytext);}
+\} {printf("%s \t- CLOSING BRACES\n", yytext);}
+\( {printf("%s \t- OPENING BRACKETS\n", yytext);}
+\) {printf("%s \t- CLOSING BRACKETS\n", yytext);}
+# {printf("%s \t- PREPROCESSOR\n", yytext); insertST(yytext, "PREPROCESSOR");}
+\\ {printf("%s \t- FSLASH\n", yytext);}
+\. {printf("%s \t- DOT DELIMITER\n", yytext);}
+\/\/.* {printf("%s \t- SINGLE LINE COMMENT\n", yytext);}
+
+"/*"([^*]|\*+[^*/])*\*+"/" {printf("%s \t- MULTI LINE COMMENT\n", yytext);}
+
+auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|int|long|register|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while|main {printf("%s \t- KEYWORD\n", yytext); insertST(yytext, "KEYBOARD");}
+
+[a-z|A-Z]([a-z|A-Z]|[0-9])* {printf("%s \t- IDENTIFIER\n", yytext); insertST(yytext, "IDENTIFIER");}
+
+[1-9][0-9]*|0 {printf("%s \t- NUMBER CONSTANT\n", yytext); insertCT(yytext, "NUMBER CONSTANT");}
+
+{PLUS}|{MINUS}|{MULT}|{DIV}|{EQ}|{LEQ}|{GEQ}|{LES}|{GRE}|{REM}|{AND}|{OR} {printf("%s \t- OPERATOR\n", yytext);} 
+
+(.?) {printf("%s \t- INVALID\n", yytext);}
+%%
+
+int main(){
+
+    int i;
+    for (i=0;i<1001;i++){
+        ST[i].length=0;
+        CT[i].length=0;
+    }
+    yyin=fopen("test-1.c","r");
+    yylex();
+    printf("\n\nSYMBOL TABLE\n\n");
+    
+    printST();
+
+    printf("\n\nCONSTANT TABLE\n\n");
+    printCT();
+}
+
+int yywrap(){
+    return 1;
+}
