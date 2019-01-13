@@ -1,7 +1,6 @@
 %{
 	#include <stdio.h>
 	#include <string.h>
-	int comment_error=0;
 	
 
 	struct symboltable
@@ -177,45 +176,79 @@
 
 DE "define"
 IN "include"
-LEQ <=
-GEQ >=
-EQ =
-LES <
-GRE >
+LE <=
+GE >=
+EQ ==
+NE \!=
+G >
+L <
+OR \|\|
+AND &&
+NOT \!
+ASS =
+ADDASS \+=
+SUBASS \-=
+MULASS \*=
+DIVASS \/=
+MODASS \%=
 PLUS \+
-MINUS \-
+SUB \-
 MULT \*
 DIV \/
-REM %
-AND &
-OR \|
-
+MOD \%
+PP \+\+
+MM \-\-
+BA &
+BO \|
+OC ~
+LS <<
+RS >>
 
 
 
 %%
-([#!](" ")*({DE}|{IN})(" ")*([<]?)([A-Za-z]+)[.]?([A-Za-z]*)([>]?)(" ")*([A-Za-z0-9]*)) {printf("%s \t- PREPROCESSOR\n", yytext);}
+([#!](" ")*({DE}|{IN})(" ")*([<]?)([A-Za-z]+)[.]?([A-Za-z]*)([>]?)(" ")*([A-Za-z0-9]*)) {char c; 
+	                                                                                     if(c=input()!='\n')
+                                                                                          {
+                                                                                          	printf("Error in preprocessor directive\n");
+                                                                                          	return 0;
+                                                                                          }
+                                                                                          else
+                                                                                          {
+                                                                                           printf("%s \t- PREPROCESSOR\n", yytext);
+                                                                                           }
+                                                                                         }
+
+
 \/\/(.*) {printf("%s \t- SINGLE LINE COMMENT\n", yytext);}				
 \/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/  {printf("%s \t- MULTI LINE COMMENT\n", yytext);}
-([*/]) {comment_error++; return 0;}
 [ \n\t] ;
-\".*\"|\'.*\' {printf("%s \t- STRING CONSTANT\n", yytext); insertCT(yytext,"STRING CONSTANT");}
 ; {printf("%s \t- SEMICOLON DELIMITER\n", yytext);}
-, {printf("%s \t- COMM DELIMITER\n", yytext);}
+, {printf("%s \t- COMMA DELIMITER\n", yytext);}
 \{ {printf("%s \t- OPENING BRACES\n", yytext);}
 \} {printf("%s \t- CLOSING BRACES\n", yytext);}
 \( {printf("%s \t- OPENING BRACKETS\n", yytext);}
 \) {printf("%s \t- CLOSING BRACKETS\n", yytext);}
 \\ {printf("%s \t- FSLASH\n", yytext);}
 \. {printf("%s \t- DOT DELIMITER\n", yytext);}
-auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|int|long|register|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while|main {printf("%s \t- KEYWORD\n", yytext); insertST(yytext, "KEYBOARD");}
-
+auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|int|long|register|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while|main {printf("%s \t- KEYWORD\n", yytext); insertST(yytext, "KEYWORD");}
+\"[^\n]*\" {printf("%s \t- STRING CONSTANT\n", yytext); insertCT(yytext,"STRING CONSTANT");}
+\'[A-Z|a-z]\' {printf("%s \t- Character CONSTANT\n", yytext); insertCT(yytext,"Character CONSTANT");}
+[a-z|A-Z]([a-z|A-Z]|[0-9])*\[[0-9]*\] {printf("%s \t- ARRAY IDENTIFIER\n", yytext); insertST(yytext, "IDENTIFIER");}
 [a-z|A-Z]([a-z|A-Z]|[0-9])* {printf("%s \t- IDENTIFIER\n", yytext); insertST(yytext, "IDENTIFIER");}
+{LE}|{GE}|{EQ}|{NE}|{G}|{L}|{OR}|{AND}|{NOT}|{ASS}|{ADDASS}|{SUBASS}|{MULASS}|{DIVASS}|{MODASS}|{PLUS}|{SUB}|{MULT}|{DIV}|{MOD}|{PP}|{MM}|{BA}|{BO}|{OC}|{LS}|{RS}  {printf("%s \t- OPERATOR\n", yytext);} 
 
+\"[^\n|^\"]*[\n] {printf("ERR_INCOMPLETE_STRING:%s\n",yytext);return 0;}
 [1-9][0-9]*|0 {printf("%s \t- NUMBER CONSTANT\n", yytext); insertCT(yytext, "NUMBER CONSTANT");}
+([0-9]*)\.([0-9]+) {printf("%s \t- Floating CONSTANT\n", yytext); insertCT(yytext, "Floating CONSTANT");}
 
-{PLUS}|{MINUS}|{MULT}|{DIV}|{EQ}|{LEQ}|{GEQ}|{LES}|{GRE}|{REM}|{AND}|{OR} {printf("%s \t- OPERATOR\n", yytext);} 
-(.?) {printf("%s \t- INVALID\n", yytext);}
+
+
+(.?) {if(strcmp(yytext,"#")==0)
+         {
+         	printf("Error in preproccesor directives");
+         	return 0;
+         }}
 
 %%
 
@@ -232,14 +265,9 @@ int main(){
         ST[i].length=0;
         CT[i].length=0;
     }
-    yyin=fopen("test-1.c","r");
+    yyin=fopen("TestCase3.c","r");
     yylex();
    
-    if(comment_error !=0)
-    {
-    	printf("Error in comments\n");
-    	return 0;
-    }
     printf("\n\nSYMBOL TABLE\n\n");
     
     printST();
