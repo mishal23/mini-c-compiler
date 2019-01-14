@@ -225,12 +225,12 @@ digit [0-9]
 auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|int|long|register|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while|main/[\(|" "|\{|;] {printf("%s \t- KEYWORD\n", yytext); insertST(yytext, "KEYWORD");}
 \"[^\n]*\"/[;|,|)] {printf("%s \t- STRING CONSTANT\n", yytext); insertCT(yytext,"STRING CONSTANT");}
 \'[A-Z|a-z]\'/[;|,|)] {printf("%s \t- Character CONSTANT\n", yytext); insertCT(yytext,"Character CONSTANT");}
-[a-z|A-Z]([a-z|A-Z]|[0-9])*\[[0-9]*\]/[{operator}|,|;|\)|" "] {printf("%s \t- ARRAY IDENTIFIER\n", yytext); insertST(yytext, "IDENTIFIER");}
+[a-z|A-Z]([a-z|A-Z]|[0-9])*\[[0-9]*\]/[<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|,|;|\)|" "] {printf("%s \t- ARRAY IDENTIFIER\n", yytext); insertST(yytext, "IDENTIFIER");}
 
 {operator}/[a-z]|{digit}|;|" "|[A-Z] {printf("%s \t- OPERATOR\n", yytext);} 
 
-[1-9][0-9]*|0/[;|,|" "|\)] {printf("%s \t- NUMBER CONSTANT\n", yytext); insertCT(yytext, "NUMBER CONSTANT");}
-([0-9]*)\.([0-9]+)/[;|,|" "|\)] {printf("%s \t- Floating CONSTANT\n", yytext); insertCT(yytext, "Floating CONSTANT");}
+[1-9][0-9]*|0/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~] {printf("%s \t- NUMBER CONSTANT\n", yytext); insertCT(yytext, "NUMBER CONSTANT");}
+([0-9]*)\.([0-9]+)/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~] {printf("%s \t- Floating CONSTANT\n", yytext); insertCT(yytext, "Floating CONSTANT");}
 {letter}({letter}|{digit})*/[" "|;|,|\(|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~] {printf("%s \t- IDENTIFIER\n", yytext); insertST(yytext, "IDENTIFIER");}
 
 
@@ -240,14 +240,10 @@ auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for
 %%
 
 
-
-
-
-
-
 int main(int argc , char **argv){
 	
 	printf("====================================================================\n");
+
     int i;
     for (i=0;i<1001;i++){
         ST[i].length=0;
@@ -263,7 +259,6 @@ int main(int argc , char **argv){
 
     printf("\n\nCONSTANT TABLE\n\n");
     printCT();
-
 }
 
 int yywrap(){
