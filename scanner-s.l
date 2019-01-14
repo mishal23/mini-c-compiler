@@ -245,16 +245,14 @@ auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for
 
 
 
-int main(int argc , char **argv){
-	
-	printf("====================================================================\n");
+int main(){
+
     int i;
     for (i=0;i<1001;i++){
         ST[i].length=0;
         CT[i].length=0;
     }
-
-	yyin = fopen(argv[1],"r");
+    yyin=fopen("tests/test2.c","r");
     yylex();
    
     printf("\n\nSYMBOL TABLE\n\n");
@@ -263,7 +261,6 @@ int main(int argc , char **argv){
 
     printf("\n\nCONSTANT TABLE\n\n");
     printCT();
-
 }
 
 int yywrap(){
