@@ -229,8 +229,8 @@ auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for
 
 {operator}/[a-z]|{digit}|;|" "|[A-Z] {printf("%s \t- OPERATOR\n", yytext);} 
 
-[1-9][0-9]*|0/[;|,|" "|\)] {printf("%s \t- NUMBER CONSTANT\n", yytext); insertCT(yytext, "NUMBER CONSTANT");}
-([0-9]*)\.([0-9]+)/[;|,|" "|\)] {printf("%s \t- Floating CONSTANT\n", yytext); insertCT(yytext, "Floating CONSTANT");}
+[1-9][0-9]*|0/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~] {printf("%s \t- NUMBER CONSTANT\n", yytext); insertCT(yytext, "NUMBER CONSTANT");}
+([0-9]*)\.([0-9]+)/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~] {printf("%s \t- Floating CONSTANT\n", yytext); insertCT(yytext, "Floating CONSTANT");}
 {letter}({letter}|{digit})*/[" "|;|,|\(|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~] {printf("%s \t- IDENTIFIER\n", yytext); insertST(yytext, "IDENTIFIER");}
 
 
@@ -246,36 +246,21 @@ auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for
 
 
 int main(){
-	int m;
-	for(m=1;m<10;m++)
-	{
-		printf("\n====================================================================\n");
-	    int i;
-	    for (i=0;i<1001;i++){
-	        ST[i].length=0;
-	        CT[i].length=0;
-	    }
-	    char *address = "tests/test";
-	    size_t len = strlen(address);
-	    char *file = malloc(len + 1 + 1 ); /* one for extra char, one for trailing zero */
-	    strcpy(file, address);
-	    file[len] = m+'0';
-	    file[len + 1] = '.';
-	    file[len + 2] = 'c';
-	    file[len + 3] = '\0';
 
-	    printf("%s",file);
-	    yyin=fopen(file,"r");
-	    yylex();
-	   
-	    printf("\n\nSYMBOL TABLE\n\n");
-	    
-	    printST();
+    int i;
+    for (i=0;i<1001;i++){
+        ST[i].length=0;
+        CT[i].length=0;
+    }
+    yyin=fopen("TestCase4.c","r");
+    yylex();
+   
+    printf("\n\nSYMBOL TABLE\n\n");
+    
+    printST();
 
-	    printf("\n\nCONSTANT TABLE\n\n");
-	    printCT();
-	}
-	printf("\n====================================================================\n");
+    printf("\n\nCONSTANT TABLE\n\n");
+    printCT();
 }
 
 int yywrap(){
