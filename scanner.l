@@ -222,6 +222,8 @@ RS >>
 
 \/\/(.*) {printf("%s \t- SINGLE LINE COMMENT\n", yytext);}				
 \/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/  {printf("%s \t- MULTI LINE COMMENT\n", yytext);}
+\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\** {printf("%s \t ERR_UNMATCHED_COMMENT\n", yytext);}
+\*\/  {printf("%s \t ERR_UNMATCHED_COMMENT\n", yytext);}
 [ \n\t] ;
 ; {printf("%s \t- SEMICOLON DELIMITER\n", yytext);}
 , {printf("%s \t- COMMA DELIMITER\n", yytext);}
