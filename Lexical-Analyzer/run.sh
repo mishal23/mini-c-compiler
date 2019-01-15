@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function run() {
-	lex scanner1.l && gcc lex.yy.c
+	flex scanner.l && gcc lex.yy.c
 	local total_testcases="$1"
 	echo "Running: $total_testcases"
 	local start=1
