@@ -7,7 +7,7 @@ function run() {
 	local start=1
 	while [ $start -le $total_testcases ]
 	do
-		echo `\n\n`
+		printf "\n\n"
 		echo Running TestCase $start
 		local filename="tests/test"$start".c"
 		./a.out $filename
