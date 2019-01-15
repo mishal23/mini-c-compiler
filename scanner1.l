@@ -222,16 +222,17 @@ digit [0-9]
 \) {printf("%s \t- CLOSING BRACKETS\n", yytext);}
 \[ {printf("%s \t- SQUARE OPENING BRACKETS\n", yytext);}
 \] {printf("%s \t- SQUARE CLOSING BRACKETS\n", yytext);}
+\: {printf("%s \t- COLON DELIMITER\n", yytext);}
 \\ {printf("%s \t- FSLASH\n", yytext);}
 \. {printf("%s \t- DOT DELIMITER\n", yytext);}
-auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|int|long|register|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while|main/[\(|" "|\{|;] {printf("%s \t- KEYWORD\n", yytext); insertST(yytext, "KEYWORD");}
+auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|int|long|register|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while|main/[\(|" "|\{|;|:] {printf("%s \t- KEYWORD\n", yytext); insertST(yytext, "KEYWORD");}
 \"[^\n]*\"/[;|,|\)] {printf("%s \t- STRING CONSTANT\n", yytext); insertCT(yytext,"STRING CONSTANT");}
-\'[A-Z|a-z]\'/[;|,|\)] {printf("%s \t- Character CONSTANT\n", yytext); insertCT(yytext,"Character CONSTANT");}
+\'[A-Z|a-z]\'/[;|,|\)|:] {printf("%s \t- Character CONSTANT\n", yytext); insertCT(yytext,"Character CONSTANT");}
 [a-z|A-Z]([a-z|A-Z]|[0-9])*/\[ {printf("%s \t- ARRAY IDENTIFIER\n", yytext); insertST(yytext, "IDENTIFIER");}
 
 {operator}/[a-z]|[0-9]|;|" "|[A-Z]|\(|\"|\'|\) {printf("%s \t- OPERATOR\n", yytext);} 
 
-[1-9][0-9]*|0/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\]|\}] {printf("%s \t- NUMBER CONSTANT\n", yytext); insertCT(yytext, "NUMBER CONSTANT");}
+[1-9][0-9]*|0/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\]|\}|:] {printf("%s \t- NUMBER CONSTANT\n", yytext); insertCT(yytext, "NUMBER CONSTANT");}
 ([0-9]*)\.([0-9]+)/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~] {printf("%s \t- Floating CONSTANT\n", yytext); insertCT(yytext, "Floating CONSTANT");}
 [A-Za-z_][A-Za-z_0-9]*/[" "|;|,|\(|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\n|\.|\{] {printf("%s \t- IDENTIFIER\n", yytext); insertST(yytext, "IDENTIFIER");}
 
@@ -276,7 +277,7 @@ int main(){
         ST[i].length=0;
         CT[i].length=0;
     }
-    yyin=fopen("test1.c","r");
+    yyin=fopen("test10.c","r");
     yylex();
    
     printf("\n\nSYMBOL TABLE\n\n");
