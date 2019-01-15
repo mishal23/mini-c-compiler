@@ -220,49 +220,68 @@ digit [0-9]
 \} {printf("%s \t- CLOSING BRACES\n", yytext);}
 \( {printf("%s \t- OPENING BRACKETS\n", yytext);}
 \) {printf("%s \t- CLOSING BRACKETS\n", yytext);}
+\[ {printf("%s \t- SQUARE OPENING BRACKETS\n", yytext);}
+\] {printf("%s \t- SQUARE CLOSING BRACKETS\n", yytext);}
 \\ {printf("%s \t- FSLASH\n", yytext);}
 \. {printf("%s \t- DOT DELIMITER\n", yytext);}
 auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|int|long|register|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while|main/[\(|" "|\{|;] {printf("%s \t- KEYWORD\n", yytext); insertST(yytext, "KEYWORD");}
-\"[^\n]*\"/[;|,|)] {printf("%s \t- STRING CONSTANT\n", yytext); insertCT(yytext,"STRING CONSTANT");}
-\'[A-Z|a-z]\'/[;|,|)] {printf("%s \t- Character CONSTANT\n", yytext); insertCT(yytext,"Character CONSTANT");}
-[a-z|A-Z]([a-z|A-Z]|[0-9])*\[[0-9]*\]/[{operator}|,|;|\)|" "] {printf("%s \t- ARRAY IDENTIFIER\n", yytext); insertST(yytext, "IDENTIFIER");}
+\"[^\n]*\"/[;|,|\)] {printf("%s \t- STRING CONSTANT\n", yytext); insertCT(yytext,"STRING CONSTANT");}
+\'[A-Z|a-z]\'/[;|,|\)] {printf("%s \t- Character CONSTANT\n", yytext); insertCT(yytext,"Character CONSTANT");}
+[a-z|A-Z]([a-z|A-Z]|[0-9])*/\[ {printf("%s \t- ARRAY IDENTIFIER\n", yytext); insertST(yytext, "IDENTIFIER");}
 
-{operator}/[a-z]|{digit}|;|" "|[A-Z] {printf("%s \t- OPERATOR\n", yytext);} 
+{operator}/[a-z]|[0-9]|;|" "|[A-Z] {printf("%s \t- OPERATOR\n", yytext);} 
 
-[1-9][0-9]*|0/[;|,|" "|\)] {printf("%s \t- NUMBER CONSTANT\n", yytext); insertCT(yytext, "NUMBER CONSTANT");}
-([0-9]*)\.([0-9]+)/[;|,|" "|\)] {printf("%s \t- Floating CONSTANT\n", yytext); insertCT(yytext, "Floating CONSTANT");}
-{letter}({letter}|{digit})*/[" "|;|,|\(|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~] {printf("%s \t- IDENTIFIER\n", yytext); insertST(yytext, "IDENTIFIER");}
+[1-9][0-9]*|0/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\]|\}] {printf("%s \t- NUMBER CONSTANT\n", yytext); insertCT(yytext, "NUMBER CONSTANT");}
+([0-9]*)\.([0-9]+)/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~] {printf("%s \t- Floating CONSTANT\n", yytext); insertCT(yytext, "Floating CONSTANT");}
+{letter}({letter}|{digit})*/[" "|;|,|\(|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\n|\.] {printf("%s \t- IDENTIFIER\n", yytext); insertST(yytext, "IDENTIFIER");}
 
 
 
-(.?) {printf("Error at line no. %d\n", yylineno); return 0;}
+(.?) {if(yytext[0]=='#')
+       {
+       	printf("Error in Pre-Processor directive at line no. %d\n",yylineno);
+       }
+       else if(yytext[0]=='/')
+       {
+       	printf("ERR_UNMATCHED_COMMENT at line no. %d\n",yylineno);
+       }
+       else if(yytext[0]=='"')
+       {
+       	printf("ERR_INCOMPLETE_STRING at line no. %d\n",yylineno);
+       }
+       else
+       {
+       	printf("ERROR at line no. %d\n",yylineno);
+       }
+       return 0;
+
+
+
+
+
+}
 
 %%
 
+int main(int argc , char **argv) {
 
+	printf("====================================================================\n");
 
+	int i;
+	for (i=0;i<1001;i++){
+		ST[i].length=0;
+		CT[i].length=0;
+	}
 
-
-
-
-int main(){
-
-    int i;
-    for (i=0;i<1001;i++){
-        ST[i].length=0;
-        CT[i].length=0;
-    }
-    yyin=fopen("tests/test2.c","r");
-    yylex();
-   
-    printf("\n\nSYMBOL TABLE\n\n");
-    
+	yyin = fopen(argv[1],"r");
+	yylex();
+	
+	printf("\n\nSYMBOL TABLE\n\n");
     printST();
-
-    printf("\n\nCONSTANT TABLE\n\n");
-    printCT();
+	printf("\n\nCONSTANT TABLE\n\n");
+	printCT();
 }
 
-int yywrap(){
+int yywrap() {
     return 1;
 }

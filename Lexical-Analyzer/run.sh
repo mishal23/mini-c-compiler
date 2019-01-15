@@ -1,4 +1,5 @@
 #!/bin/bash
+
 function run() {
 	lex scanner1.l && gcc lex.yy.c
 	local total_testcases="$1"
