@@ -229,7 +229,7 @@ auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for
 \'[A-Z|a-z]\'/[;|,|\)] {printf("%s \t- Character CONSTANT\n", yytext); insertCT(yytext,"Character CONSTANT");}
 [a-z|A-Z]([a-z|A-Z]|[0-9])*/\[ {printf("%s \t- ARRAY IDENTIFIER\n", yytext); insertST(yytext, "IDENTIFIER");}
 
-{operator}/[a-z]|[0-9]|;|" "|[A-Z]|\(|\"|\' {printf("%s \t- OPERATOR\n", yytext);} 
+{operator}/[a-z]|[0-9]|;|" "|[A-Z]|\(|\"|\'|\) {printf("%s \t- OPERATOR\n", yytext);} 
 
 [1-9][0-9]*|0/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\]|\}] {printf("%s \t- NUMBER CONSTANT\n", yytext); insertCT(yytext, "NUMBER CONSTANT");}
 ([0-9]*)\.([0-9]+)/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~] {printf("%s \t- Floating CONSTANT\n", yytext); insertCT(yytext, "Floating CONSTANT");}
@@ -276,7 +276,7 @@ int main(){
         ST[i].length=0;
         CT[i].length=0;
     }
-    yyin=fopen("test3.c","r");
+    yyin=fopen("test1.c","r");
     yylex();
    
     printf("\n\nSYMBOL TABLE\n\n");
