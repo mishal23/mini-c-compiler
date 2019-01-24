@@ -14,7 +14,7 @@ int main()
 	int x = a + b;
 	// Single Line Comment
 	/* This is a 
-	   multi-line comment */
+	   multi-line comment */ */
 	   
 	int var1;
 	char var2;

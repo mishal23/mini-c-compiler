@@ -19,7 +19,6 @@ int main(){
     f=a%b;
     g=a&b;
     h=a|b;
-    h=a^b;
     h=a*(a+b);
     h=a*a+b*b;
     h=fun(b);
