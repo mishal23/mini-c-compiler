@@ -216,7 +216,18 @@ long	{return LONG;}
 register{return REGISTER;}
 return	{return RETURN;}
 short	{return SHORT;}
-|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while|main/[\(|" "|\{|;|:|"\n"|"\t"] {printf("%s \t- KEYWORD\n", yytext); insertST(yytext, "KEYWORD");}
+signed	{return SIGNED;}
+sizeof 	{return SIZEOF;}
+static	{return STATIC;}
+struct	{return STRCUT;}
+switch	{return SWITCH;}
+typedef	{return TYPEDEF;}
+union	{return UNION;}
+unsigned{return UNSIGNED;}
+void	{return VOID;}
+volatile{return VOLAT;}
+while	{return WHILE;}
+main	{return MAIN;}
 \"[^\n]*\"/[;|,|\)] {printf("%s \t- STRING CONSTANT\n", yytext); insertCT(yytext,"STRING CONSTANT");}
 \'[A-Z|a-z]\'/[;|,|\)|:] {printf("%s \t- Character CONSTANT\n", yytext); insertCT(yytext,"Character CONSTANT");}
 [a-z|A-Z]([a-z|A-Z]|[0-9])*/\[ {printf("%s \t- ARRAY IDENTIFIER\n", yytext); insertST(yytext, "IDENTIFIER");}
