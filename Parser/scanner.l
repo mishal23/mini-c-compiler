@@ -178,22 +178,22 @@ operator [[<][=]|[>][=]|[=][=]|[!][=]|[>]|[<]|[\|][\|]|[&][&]|[\!]|[=]|[\^]|[\+]
 
 %%
 \n   {yylineno++;}
-([#][" "]*({IN})[ ]*([<]?)([A-Za-z]+)[.]?([A-Za-z]*)([>]?))/["\n"|\/|" "|"\t"] {printf("%s \t-Pre Processor directive\n",yytext);}	//Matches #include<stdio.h>
-([#][" "]*({DE})[" "]*([A-Za-z]+)(" ")*[0-9]+)/["\n"|\/|" "|"\t"] {printf("%s \t-Macro\n",yytext);} //Matches macro
-\/\/(.*) {printf("%s \t- SINGLE LINE COMMENT\n", yytext);}				
-\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/  {printf("%s \t- MULTI LINE COMMENT\n", yytext);}
+([#][" "]*({IN})[ ]*([<]?)([A-Za-z]+)[.]?([A-Za-z]*)([>]?))/["\n"|\/|" "|"\t"] { }
+([#][" "]*({DE})[" "]*([A-Za-z]+)(" ")*[0-9]+)/["\n"|\/|" "|"\t"] {  } 
+\/\/(.*) { }				
+\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/  {  }
 [ \n\t] ;
-; {printf("%s \t- SEMICOLON DELIMITER\n", yytext);}
-, {printf("%s \t- COMMA DELIMITER\n", yytext);}
-\{ {printf("%s \t- OPENING BRACES\n", yytext);}
-\} {printf("%s \t- CLOSING BRACES\n", yytext);}
-\( {printf("%s \t- OPENING BRACKETS\n", yytext);}
-\) {printf("%s \t- CLOSING BRACKETS\n", yytext);}
-\[ {printf("%s \t- SQUARE OPENING BRACKETS\n", yytext);}
-\] {printf("%s \t- SQUARE CLOSING BRACKETS\n", yytext);}
-\: {printf("%s \t- COLON DELIMITER\n", yytext);}
-\\ {printf("%s \t- FSLASH\n", yytext);}
-\. {printf("%s \t- DOT DELIMITER\n", yytext);}
+; {return(';');}
+, { return(','); }
+("{") {return('{');}
+("}") {return('}');}
+"("	  {  return('('); }
+")"	  {  return(')'); }
+\[ {return('[');}
+\] {return(']');}
+\: {return(':');}
+\\ {return('\');}
+\. {return('.');}
 
 auto 	{return AUTO;}
 break 	{return BREAK;}
@@ -232,11 +232,50 @@ main	{return MAIN;}
 \'[A-Z|a-z]\'/[;|,|\)|:] {printf("%s \t- Character CONSTANT\n", yytext); insertCT(yytext,"Character CONSTANT");}
 [a-z|A-Z]([a-z|A-Z]|[0-9])*/\[ {printf("%s \t- ARRAY IDENTIFIER\n", yytext); insertST(yytext, "IDENTIFIER");}
 
+
+\"[^\n]*\"/[;|,|\)] {yylval = yytext; return STRING; insertCT(yytext,"STRING CONSTANT");}
+\'[A-Z|a-z]\'/[;|,|\)|:] {yylval = yytext; return CHAR_CONST; insertCT(yytext,"Character CONSTANT");}
+[a-z|A-Z]([a-z|A-Z]|[0-9])*/\[ {yylval = yytext; return ARRAY_IDENTIFIER; insertST(yytext, "IDENTIFIER");}
+
+
+"++"			{  return INC_OP; }
+"--"			{  return DEC_OP; }
+"<<"			{  return LEFT_OP; }
+">>"			{  return RIGHT_OP; }
+"<="			{  return LE_OP; }
+"<"				{  return L_OP; }
+">="			{  return GE_OP; }
+">"				{  return G_OP; }
+"=="			{  return EQ_OP; }
+"!="			{  return NE_OP; }
+"&&"			{  return AND_OP; }
+"||"			{  return OR_OP; }
+"^"				{  return CARET; }
+"*="			{  return MUL_ASSIGN; }
+"/="			{  return DIV_ASSIGN; }
+"%="			{  return MOD_ASSIGN; }
+"+="			{  return ADD_ASSIGN; }
+"-="			{  return SUB_ASSIGN; }
+"<<="			{  return LEFT_ASSIGN; }
+">>="			{  return RIGHT_ASSIGN; }
+"&="			{  return AND_ASSIGN; }
+"^="			{  return XOR_ASSIGN; }
+"|="			{  return OR_ASSIGN; }
+"&"				{  return AMP; }
+"!"				{  return EXL; }
+"~"				{  return TILDE; }
+"-"				{  return MINUS; }
+"+"				{  return PLUS; }
+"*"				{  return MUL; }
+"/"				{  return DIV; }
+"%"				{  return MOD; }
+"|"				{  return PIPE; }
+"?"				{  return QUES; }
 {operator}/[a-z]|[0-9]|;|" "|[A-Z]|\(|\"|\'|\)|\n|\t {printf("%s \t- OPERATOR\n", yytext);} 
 
-[1-9][0-9]*|0/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\]|\}|:|\n|\t|\^] {printf("%s \t- NUMBER CONSTANT\n", yytext); insertCT(yytext, "NUMBER CONSTANT");}
-([0-9]*)\.([0-9]+)/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\n|\t|\^] {printf("%s \t- Floating CONSTANT\n", yytext); insertCT(yytext, "Floating CONSTANT");}
-[A-Za-z_][A-Za-z_0-9]*/[" "|;|,|\(|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\n|\.|\{|\^|\t] {printf("%s \t- IDENTIFIER\n", yytext); insertST(yytext, "IDENTIFIER");}
+[1-9][0-9]*|0/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\]|\}|:|\n|\t|\^] {yylval = yytext; return INT_CONSTANT; insertCT(yytext, "NUMBER CONSTANT");}
+([0-9]*)\.([0-9]+)/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\n|\t|\^] {yylval = yytext; return FLOAT_CONSTANT; insertCT(yytext, "Floating CONSTANT");}
+[A-Za-z_][A-Za-z_0-9]*/[" "|;|,|\(|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\n|\.|\{|\^|\t] {yylval = yytext; return IDENTIFIER; insertST(yytext, "IDENTIFIER");}
 
 
 
@@ -263,7 +302,8 @@ main	{return MAIN;}
 
 %%
 
-int main(int argc , char **argv){
+int main(int argc , char **argv)
+{
 
     printf("====================================================================\n");
 
@@ -282,6 +322,7 @@ int main(int argc , char **argv){
 	printCT();
 }
 
-int yywrap(){
+int yywrap()
+{
     return 1;
 }
