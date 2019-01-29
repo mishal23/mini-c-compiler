@@ -1,7 +1,7 @@
 %{
 	#include <stdio.h>
 	#include <string.h>
-	
+	#include "y.tab.h"
 
 	struct symboltable
 	{
@@ -173,70 +173,41 @@
 DE "define"
 IN "include"
 
-operator [[<][=]|[>][=]|[=][=]|[!][=]|[>]|[<]|[\|][\|]|[&][&]|[\!]|[=]|[\^]|[\+][=]|[\-][=]|[\*][=]|[\/][=]|[\%][=]|[\+][\+]|[\-][\-]|[\+]|[\-]|[\*]|[\/]|[\%]|[&]|[\|]|[~]|[<][<]|[>][>]]
-
-
 %%
 \n   {yylineno++;}
-([#][" "]*({IN})[ ]*([<]?)([A-Za-z]+)[.]?([A-Za-z]*)([>]?))/["\n"|\/|" "|"\t"] { }
-([#][" "]*({DE})[" "]*([A-Za-z]+)(" ")*[0-9]+)/["\n"|\/|" "|"\t"] {  } 
-\/\/(.*) { }				
-\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/  {  }
+([#][" "]*({IN})[ ]*([<]?)([A-Za-z]+)[.]?([A-Za-z]*)([>]?))/["\n"|\/|" "|"\t"]	{ return INCLUDE;}
+([#][" "]*({DE})[" "]*([A-Za-z]+)(" ")*[0-9]+)/["\n"|\/|" "|"\t"]				{ return DEFINE;} 
+\/\/(.*)																		{	}
+\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/										{	}
 [ \n\t] ;
-; {return(';');}
-, { return(','); }
-("{") {return('{');}
-("}") {return('}');}
-"("	  {  return('('); }
-")"	  {  return(')'); }
-\[ {return('[');}
-\] {return(']');}
-\: {return(':');}
-\\ {return('\');}
-\. {return('.');}
+";"				{ return(';'); }
+","				{ return(','); }
+("{")			{ return('{'); }
+("}")			{ return('}'); }
+"("				{ return('('); }
+")"				{ return(')'); }
+("["|"<:")		{ return('['); }
+("]"|":>") 		{ return(']'); }
+":"				{ return(':'); }
+"."				{ return('.'); }
 
-auto 	{return AUTO;}
-break 	{return BREAK;}
-case 	{return CASE;}
-char 	{return CHAR;}
-const 	{return CONST;}
-continue{return CONT;}
-default {return DEF;}
-do 		{return DO;}
-double	{return DOUBLE;}
-else 	{return ELSE;}
-enum 	{return ENUM;}
-extern	{return EXTERN;}
-float 	{return FLOAT;}
-for		{return FOR;}
-goto	{return GOTO;}
-if 		{return IF;}
-int 	{return INT;}
-long	{return LONG;}
-register{return REGISTER;}
-return	{return RETURN;}
-short	{return SHORT;}
-signed	{return SIGNED;}
-sizeof 	{return SIZEOF;}
-static	{return STATIC;}
-struct	{return STRCUT;}
-switch	{return SWITCH;}
-typedef	{return TYPEDEF;}
-union	{return UNION;}
-unsigned{return UNSIGNED;}
-void	{return VOID;}
-volatile{return VOLAT;}
-while	{return WHILE;}
-main	{return MAIN;}
-\"[^\n]*\"/[;|,|\)] {printf("%s \t- STRING CONSTANT\n", yytext); insertCT(yytext,"STRING CONSTANT");}
-\'[A-Z|a-z]\'/[;|,|\)|:] {printf("%s \t- Character CONSTANT\n", yytext); insertCT(yytext,"Character CONSTANT");}
-[a-z|A-Z]([a-z|A-Z]|[0-9])*/\[ {printf("%s \t- ARRAY IDENTIFIER\n", yytext); insertST(yytext, "IDENTIFIER");}
-
-
-\"[^\n]*\"/[;|,|\)] {yylval = yytext; return STRING; insertCT(yytext,"STRING CONSTANT");}
-\'[A-Z|a-z]\'/[;|,|\)|:] {yylval = yytext; return CHAR_CONST; insertCT(yytext,"Character CONSTANT");}
-[a-z|A-Z]([a-z|A-Z]|[0-9])*/\[ {yylval = yytext; return ARRAY_IDENTIFIER; insertST(yytext, "IDENTIFIER");}
-
+"char"			{return CHAR;}
+"double"		{return DOUBLE;}
+"else"			{return ELSE;}
+"float"			{return FLOAT;}
+"for"			{return FOR;}
+"if"			{return IF;}
+"int"			{return INT;}
+"long"			{return LONG;}
+"return"		{return RETURN;}
+"short"			{return SHORT;}
+"signed"		{return SIGNED;}
+"sizeof" 		{return SIZEOF;}
+"struct"		{return STRUCT;}
+"unsigned"		{return UNSIGNED;}
+"void"			{return VOID;}
+"while"			{return WHILE;}
+"main"			{return MAIN;}
 
 "++"			{  return INC_OP; }
 "--"			{  return DEC_OP; }
@@ -270,12 +241,14 @@ main	{return MAIN;}
 "/"				{  return DIV; }
 "%"				{  return MOD; }
 "|"				{  return PIPE; }
-"?"				{  return QUES; }
-{operator}/[a-z]|[0-9]|;|" "|[A-Z]|\(|\"|\'|\)|\n|\t {printf("%s \t- OPERATOR\n", yytext);} 
+"="				{ return ASSIGN;}
 
-[1-9][0-9]*|0/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\]|\}|:|\n|\t|\^] {yylval = yytext; return INT_CONSTANT; insertCT(yytext, "NUMBER CONSTANT");}
-([0-9]*)\.([0-9]+)/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\n|\t|\^] {yylval = yytext; return FLOAT_CONSTANT; insertCT(yytext, "Floating CONSTANT");}
-[A-Za-z_][A-Za-z_0-9]*/[" "|;|,|\(|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\n|\.|\{|\^|\t] {yylval = yytext; return IDENTIFIER; insertST(yytext, "IDENTIFIER");}
+\"[^\n]*\"/[;|,|\)] 			{yylval = yytext; insertCT(yytext,"String Constant"); return STR_CONST;}
+\'[A-Z|a-z]\'/[;|,|\)|:] 		{yylval = yytext; insertCT(yytext,"Character Constant"); return CHAR_CONST;}
+[a-z|A-Z]([a-z|A-Z]|[0-9])*/\[ 	{yylval = yytext; insertST(yytext, "Array Identifier"); return ID;}
+[1-9][0-9]*|0/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\]|\}|:|\n|\t|\^] 	{yylval = yytext; insertCT(yytext, "Number Constant"); return NUM_CONST;}
+([0-9]*)\.([0-9]+)/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\n|\t|\^] 	{yylval = yytext; insertCT(yytext, "Floating Constant"); return FLT_CONST;}
+[A-Za-z_][A-Za-z_0-9]*/[" "|;|,|\(|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\n|\.|\{|\^|\t] {yylval = yytext; insertST(yytext, "Identifier"); return ID;}
 
 
 
@@ -302,27 +275,7 @@ main	{return MAIN;}
 
 %%
 
-int main(int argc , char **argv)
-{
-
-    printf("====================================================================\n");
-
-	int i;
-	for (i=0;i<1001;i++){
-		ST[i].length=0;
-		CT[i].length=0;
-	}
-
-	yyin = fopen(argv[1],"r");
-	yylex();
-	
-	printf("\n\nSYMBOL TABLE\n\n");
-	printST();
-	printf("\n\nCONSTANT TABLE\n\n");
-	printCT();
-}
-
 int yywrap()
 {
-    return 1;
+	return 1;
 }
