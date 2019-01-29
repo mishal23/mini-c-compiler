@@ -1,5 +1,6 @@
 # Prerequisites
 *.d
+y.tab.*
 
 # Object files
 *.o
