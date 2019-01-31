@@ -5,7 +5,7 @@ int myfunc1()
   int a;
 }
 
-int myfunc2(int a, int b,char e
+int myfunc2(int a, int b,char e)
 {
    int c,d;
 }
