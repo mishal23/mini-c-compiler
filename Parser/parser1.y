@@ -52,9 +52,32 @@ PARAMS : PARAMTL | ;
 PARAMTL : TSPEC PARAMIDL;
 PARAMIDL : PARAMIDL','PARAMTL | PARAMID ;
 PARAMID : ID | ID '[' ']';
-
-STMT : '{' LDEC '}' ;
+STMT : EXSTMT | CSTMT | SSTMT | ISTMT | RSTMT | BSTMT;
+CSTMT : '{' LDEC STMTL '}' ;
 LDEC : LDEC VDEC | ;
+STMTL : STMT STMTL | ;
+EXSTMT : EX ';'| ';';
+SSTMT : IF '(' SEXP ')' STMT | IF '(' SEXP ')' STMT ELSE STMT ;
+ISTMT : WHILE'('SEXP ')'STMT | FOR '(' EX ';' SEXP ';' EX ')';
+RSTMT : RETURN ';' | RETURN EX ';' ;
+BSTMT : BREAK ';' ;
+EX : MUT ASSIGN EX | MUT ADD_ASSIGN EX |  MUT SUB_ASSIGN EX | MUT MUL_ASSIGN EX | MUT DIV_ASSIGN EX | MUT MOD_ASSIGN EX | MUT INC_OP | MUT DEC_OP | SEXP ;
+SEXP : SEXP OR_OP ANDEXP | ANDEXP ;
+ANDEXP : ANDEXP AND_OP UREXP | UREXP ;
+UREXP : EXL UREXP | REXP ;
+REXP : SUMEXP RELOP SUMEXP | SUMEXP ;
+RELOP : GE_OP | LE_OP | G_OP | L_OP | EQ_OP | NE_OP ;
+SUMEXP : SUMEXP SUMOP TERM | TERM ;
+SUMOP : PLUS | MINUS ;
+TERM : TERM MULOP FACTOR | FACTOR ;
+MULOP : MUL | DIV | MOD ;
+FACTOR : IMUT | MUT ;
+MUT : ID | MUT '[' EX ']' | MUT '.' ID;
+IMUT : '(' EX ')' | CALL | CONST;
+CALL : ID '(' ARGS ')';
+ARGS : ARGSLIST | ;
+ARGSLIST : ARGSLIST ',' EX | EX ;
+CONST : NUM_CONST | STR_CONST | FLT_CONST | CHAR_CONST;
 
 %%
 
@@ -63,7 +86,7 @@ extern char *yytext;
 extern int yylineno;
 int main()
 {
-	yyin = fopen("../Lexical-Analyzer/tests/test15.c", "r");
+	yyin = fopen("../Lexical-Analyzer/tests/test7.c", "r");
 	yyparse();
 
 	if(flag == 0)

@@ -7,10 +7,10 @@ int square(int a)
 
 int main()
 {
-  int num=2;
-  int num2 = square(num);
+  int num;//=2;
+  int num2;// = square(num);
 
-  printf("Square of %d is %d", num, num2);
+  //printf("Square of %d is %d", num, num2);
 
   return 0;
 }

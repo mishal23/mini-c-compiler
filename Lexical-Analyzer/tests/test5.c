@@ -2,22 +2,24 @@
 
 int main()
 {
-	int a = 5;
+	int a;
+	a = 5;
 	while(a>0)
 	{
-		printf("Hello world");
+		//printf("Hello world");
 		a--;
 	}
 
 	a=4;
 	while(a>0)
 	{
-		printf("%d",a);
+		//printf("%d",a);
 		a--;
-		int b = 4;
+		//int b;
+		b = 4;
 		while(b>0)
 		{
-			printf("%d", a*b);
+			//printf("%d", a*b);
 			b--;
 		}
 	}
