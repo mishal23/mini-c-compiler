@@ -175,8 +175,8 @@ IN "include"
 
 %%
 \n   {yylineno++;}
-([#][" "]*({IN})[ ]*([<]?)([A-Za-z]+)[.]?([A-Za-z]*)([>]?))/["\n"|\/|" "|"\t"]	{ return INCLUDE;}
-([#][" "]*({DE})[" "]*([A-Za-z]+)(" ")*[0-9]+)/["\n"|\/|" "|"\t"]				{ return DEFINE;} 
+([#][" "]*({IN})[ ]*([<]?)([A-Za-z]+)[.]?([A-Za-z]*)([>]?))/["\n"|\/|" "|"\t"]	{ }
+([#][" "]*({DE})[" "]*([A-Za-z]+)(" ")*[0-9]+)/["\n"|\/|" "|"\t"]				{ } 
 \/\/(.*)																		{	}
 \/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/										{	}
 [ \n\t] ;
@@ -191,56 +191,57 @@ IN "include"
 ":"				{ return(':'); }
 "."				{ return('.'); }
 
-"char"			{return CHAR;}
-"double"		{return DOUBLE;}
-"else"			{return ELSE;}
-"float"			{return FLOAT;}
-"for"			{return FOR;}
-"if"			{return IF;}
-"int"			{return INT;}
-"long"			{return LONG;}
-"return"		{return RETURN;}
-"short"			{return SHORT;}
-"signed"		{return SIGNED;}
-"sizeof" 		{return SIZEOF;}
-"struct"		{return STRUCT;}
-"unsigned"		{return UNSIGNED;}
-"void"			{return VOID;}
-"while"			{return WHILE;}
-"main"			{return MAIN;}
+"char"			{ return CHAR;}
+"double"		{ return DOUBLE;}
+"else"			{ return ELSE;}
+"float"			{ return FLOAT;}
+"while"			{ return WHILE;}
+"for"			{ return FOR;}
+"if"			{ return IF;}
+"int"			{ return INT;}
+"long"			{ return LONG;}
+"return"		{ return RETURN;}
+"short"			{ return SHORT;}
+"signed"		{ return SIGNED;}
+"sizeof" 		{ return SIZEOF;}
+"struct"		{ return STRUCT;}
+"unsigned"		{ return UNSIGNED;}
+"void"			{ return VOID;}
+"break"			{ return BREAK;}
 
-"++"			{  return INC_OP; }
-"--"			{  return DEC_OP; }
-"<<"			{  return LEFT_OP; }
-">>"			{  return RIGHT_OP; }
-"<="			{  return LE_OP; }
-"<"				{  return L_OP; }
-">="			{  return GE_OP; }
-">"				{  return G_OP; }
-"=="			{  return EQ_OP; }
-"!="			{  return NE_OP; }
-"&&"			{  return AND_OP; }
-"||"			{  return OR_OP; }
-"^"				{  return CARET; }
-"*="			{  return MUL_ASSIGN; }
-"/="			{  return DIV_ASSIGN; }
-"%="			{  return MOD_ASSIGN; }
-"+="			{  return ADD_ASSIGN; }
-"-="			{  return SUB_ASSIGN; }
-"<<="			{  return LEFT_ASSIGN; }
-">>="			{  return RIGHT_ASSIGN; }
-"&="			{  return AND_ASSIGN; }
-"^="			{  return XOR_ASSIGN; }
-"|="			{  return OR_ASSIGN; }
-"&"				{  return AMP; }
-"!"				{  return EXL; }
-"~"				{  return TILDE; }
-"-"				{  return MINUS; }
-"+"				{  return PLUS; }
-"*"				{  return MUL; }
-"/"				{  return DIV; }
-"%"				{  return MOD; }
-"|"				{  return PIPE; }
+
+"++"			{ return INC_OP; }
+"--"			{ return DEC_OP; }
+"<<"			{ return LEFT_OP; }
+">>"			{ return RIGHT_OP; }
+"<="			{ return LE_OP; }
+"<"				{ return L_OP; }
+">="			{ return GE_OP; }
+">"				{ return G_OP; }
+"=="			{ return EQ_OP; }
+"!="			{ return NE_OP; }
+"&&"			{ return AND_OP; }
+"||"			{ return OR_OP; }
+"^"				{ return CARET; }
+"*="			{ return MUL_ASSIGN; }
+"/="			{ return DIV_ASSIGN; }
+"%="			{ return MOD_ASSIGN; }
+"+="			{ return ADD_ASSIGN; }
+"-="			{ return SUB_ASSIGN; }
+"<<="			{ return LEFT_ASSIGN; }
+">>="			{ return RIGHT_ASSIGN; }
+"&="			{ return AND_ASSIGN; }
+"^="			{ return XOR_ASSIGN; }
+"|="			{ return OR_ASSIGN; }
+"&"				{ return AMP; }
+"!"				{ return EXL; }
+"~"				{ return TILDE; }
+"-"				{ return MINUS; }
+"+"				{ return PLUS; }
+"*"				{ return MUL; }
+"/"				{ return DIV; }
+"%"				{ return MOD; }
+"|"				{ return PIPE; }
 "="				{ return ASSIGN;}
 
 \"[^\n]*\"/[;|,|\)] 			{yylval = yytext; insertCT(yytext,"String Constant"); return STR_CONST;}
@@ -248,7 +249,7 @@ IN "include"
 [a-z|A-Z]([a-z|A-Z]|[0-9])*/\[ 	{yylval = yytext; insertST(yytext, "Array Identifier"); return ID;}
 [1-9][0-9]*|0/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\]|\}|:|\n|\t|\^] 	{yylval = yytext; insertCT(yytext, "Number Constant"); return NUM_CONST;}
 ([0-9]*)\.([0-9]+)/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\n|\t|\^] 	{yylval = yytext; insertCT(yytext, "Floating Constant"); return FLT_CONST;}
-[A-Za-z_][A-Za-z_0-9]*/[" "|;|,|\(|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\n|\.|\{|\^|\t] {yylval = yytext; insertST(yytext, "Identifier"); return ID;}
+[A-Za-z_][A-Za-z_0-9]* {yylval = yytext; insertST(yytext, "Identifier"); return ID;}
 
 
 
