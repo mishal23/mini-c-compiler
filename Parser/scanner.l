@@ -196,6 +196,7 @@ IN "include"
 "else"			{ return ELSE;}
 "float"			{ return FLOAT;}
 "while"			{ return WHILE;}
+"do"			{ return DO;}
 "for"			{ return FOR;}
 "if"			{ return IF;}
 "int"			{ return INT;}
@@ -242,7 +243,7 @@ IN "include"
 "/"				{ return DIV; }
 "%"				{ return MOD; }
 "|"				{ return PIPE; }
-\=			{ return ASSIGN;}
+\=				{ return ASSIGN;}
 
 \"[^\n]*\"/[;|,|\)] 			{yylval = yytext; insertCT(yytext,"String Constant"); return STR_CONST;}
 \'[A-Z|a-z]\'/[;|,|\)|:] 		{yylval = yytext; insertCT(yytext,"Character Constant"); return CHAR_CONST;}
