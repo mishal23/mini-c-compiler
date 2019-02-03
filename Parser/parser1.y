@@ -61,7 +61,7 @@ SSTMT : IF '(' SEXP ')' STMT | IF '(' SEXP ')' STMT ELSE STMT ;
 ISTMT : WHILE'('SEXP ')'STMT | FOR '(' EX ';' SEXP ';' EX ')' | DO STMT WHILE '(' SEXP ')' ';';
 RSTMT : RETURN ';' | RETURN EX ';' ;
 BSTMT : BREAK ';' ;
-STR_INIT: ASSIGN STR_CONST;
+STR_INIT: ASSIGN STR_CONST {insV();};
 ARR_INIT: ASSIGN '{' NUM_DELI '}';
 NUM_DELI: NUM_CONST ',' NUM_DELI | NUM_CONST; 
 EX : MUT ASSIGN EX | MUT ADD_ASSIGN EX |  MUT SUB_ASSIGN EX | MUT MUL_ASSIGN EX | MUT DIV_ASSIGN EX | MUT MOD_ASSIGN EX | MUT INC_OP | MUT DEC_OP | SEXP ;
@@ -81,7 +81,7 @@ CALL : ID '(' ARGS ')';
 ARGS : ARGSLIST | ;
 ARGSLIST : EX A;
 A : ',' EX A | ;
-CONST : NUM_CONST | STR_CONST | FLT_CONST | CHAR_CONST;
+CONST : NUM_CONST {insV();} | STR_CONST{insV();} | FLT_CONST{insV();} | CHAR_CONST{insV();};
 %%
 
 extern FILE *yyin;
@@ -124,6 +124,11 @@ void yyerror(char *s)
 void ins()
 {
 	insertSTtype(curid,curtype);
+}
+
+void insV()
+{
+	insertSTvalue(curid,curval);
 }
 
 
