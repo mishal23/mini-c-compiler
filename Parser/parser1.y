@@ -1,9 +1,12 @@
 %{
 	void yyerror(char* s);
+	int yylex();
 	#include "stdio.h"
 	#include "stdlib.h"
 	#include "ctype.h"
 	#include "string.h"
+	void ins();
+	void insV();
 	int flag=0;
 
 %}
@@ -43,13 +46,13 @@ DECL:DEC DECL | DEC;
 DEC: VDEC | FDEC;
 VDEC: TSPEC VDECL ';';
 VDECL: VDECID','VDECL | VDECID ;
-VDECID : ID | ID '[' NUM_CONST ']' | EX | ID '[' NUM_CONST ']' STR_INIT | ID '[' ']' STR_INIT | ID '[' NUM_CONST ']' ARR_INIT;
+VDECID : ID {ins();}| ID '[' NUM_CONST ']'{ins();} | EX{ins();} | ID '[' NUM_CONST ']' STR_INIT{ins();} | ID '[' ']' STR_INIT{ins();} | ID '[' NUM_CONST ']' ARR_INIT{ins();};
 TSPEC : INT|CHAR|FLOAT|DOUBLE|LONG|SHORT|UNSIGNED INT|UNSIGNED|UNSIGNED LONG|LONG INT|UNSIGNED LONG INT|SIGNED SHORT| UNSIGNED SHORT|SIGNED SHORT INT|UNSIGNED SHORT INT;
-FDEC : TSPEC ID '(' PARAMS ')' STMT ;
+FDEC : TSPEC ID '(' PARAMS ')' STMT {ins();};
 PARAMS : PARAMTL | ;
 PARAMTL : TSPEC PARAMIDL;
 PARAMIDL : PARAMID ',' PARAMTL | PARAMID ;
-PARAMID : ID | ID '[' ']';
+PARAMID : ID {ins();} | ID '[' ']'{ins();};
 STMT : EXSTMT | CSTMT | SSTMT | ISTMT | RSTMT | BSTMT | VDEC;
 CSTMT : '{' STMTL '}' ;
 STMTL : STMT STMTL | ;
@@ -82,8 +85,17 @@ CONST : NUM_CONST | STR_CONST | FLT_CONST | CHAR_CONST;
 %%
 
 extern FILE *yyin;
-extern char *yytext;
 extern int yylineno;
+extern char *yytext;
+void insertSTtype(char *,char *);
+extern char curid[20];
+extern char curtype[20];
+extern char curval[20];
+void incertCT(char *, char *);
+void printST();
+void printCT();
+
+
 int main(int argc , char **argv)
 {
 	yyin = fopen(argv[1], "r");
@@ -93,6 +105,11 @@ int main(int argc , char **argv)
 	{
 		printf("Valid\n");
     }
+    printf("----------Symbol Table-----------------\n");
+    printST();
+    printf("----------Constant Table----------------\n");
+    printCT();
+
 }
 
 
@@ -102,4 +119,15 @@ void yyerror(char *s)
 	printf("%d %s %s\n", yylineno, s, yytext);
 	flag=1;
 	printf("Invalid\n");
+}
+
+void ins()
+{
+	insertSTtype(curid,curtype);
+}
+
+
+int yywrap()
+{
+	return 1;
 }

@@ -3,10 +3,13 @@
 	#include <string.h>
 	#include "y.tab.h"
 
+
 	struct symboltable
 	{
 		char name[100];
+		char class[100];
 		char type[100];
+		char value[100];
 		int length;
 	}ST[1001];
 
@@ -87,7 +90,7 @@
 			if(ST[value].length == 0)
 			{
 				strcpy(ST[value].name,str1);
-				strcpy(ST[value].type,str2);
+				strcpy(ST[value].class,str2);
 				ST[value].length = strlen(str1);
 				return;
 			}
@@ -104,10 +107,35 @@
             }
 
             strcpy(ST[pos].name,str1);
-            strcpy(ST[pos].type,str2);
+            strcpy(ST[pos].class,str2);
             ST[pos].length = strlen(str1);
 		}
     }
+
+    void insertSTtype(char *str1, char *str2)
+	{
+		for(int i = 0 ; i < 1001 ; i++)
+		{
+			if(strcmp(ST[i].name,str1)==0)
+			{
+				strcpy(ST[i].type,str2);
+			}
+		}
+		
+    }
+
+    void insertSTvalue(char *str1, char *str2)
+	{
+		for(int i = 0 ; i < 1001 ; i++)
+		{
+			if(strcmp(ST[i].name,str1)==0)
+			{
+				strcpy(ST[i].value,str2);
+			}
+		}
+		
+    }
+
 
     void insertCT(char *str1, char *str2)
 	{
@@ -150,7 +178,7 @@
     			continue;
     	    }
 
-    		printf("%s\t%s\n",ST[i].name, ST[i].type);
+    		printf("%s\t%s\t%s\t%s\n",ST[i].name, ST[i].class, ST[i].type, ST[i].value);
     	}
 
     }
@@ -166,6 +194,9 @@
     		printf("%s\t%s\n",CT[i].name, CT[i].type);
     	}
     }
+    char curid[20];
+    char curtype[20];
+    char curval[20];
 
 
 %}
@@ -191,19 +222,19 @@ IN "include"
 ":"				{ return(':'); }
 "."				{ return('.'); }
 
-"char"			{ return CHAR;}
-"double"		{ return DOUBLE;}
+"char"			{ strcpy(curtype,yytext); return CHAR;}
+"double"		{ strcpy(curtype,yytext);return DOUBLE;}
 "else"			{ return ELSE;}
-"float"			{ return FLOAT;}
+"float"			{ strcpy(curtype,yytext);return FLOAT;}
 "while"			{ return WHILE;}
 "do"			{ return DO;}
 "for"			{ return FOR;}
 "if"			{ return IF;}
-"int"			{ return INT;}
-"long"			{ return LONG;}
+"int"			{ strcpy(curtype,yytext);return INT;}
+"long"			{ strcpy(curtype,yytext);return LONG;}
 "return"		{ return RETURN;}
-"short"			{ return SHORT;}
-"signed"		{ return SIGNED;}
+"short"			{ strcpy(curtype,yytext);return SHORT;}
+"signed"		{ strcpy(curtype,yytext);return SIGNED;}
 "sizeof" 		{ return SIZEOF;}
 "struct"		{ return STRUCT;}
 "unsigned"		{ return UNSIGNED;}
@@ -245,12 +276,12 @@ IN "include"
 "|"				{ return PIPE; }
 \=				{ return ASSIGN;}
 
-\"[^\n]*\"/[;|,|\)] 			{yylval = yytext; insertCT(yytext,"String Constant"); return STR_CONST;}
-\'[A-Z|a-z]\'/[;|,|\)|:] 		{yylval = yytext; insertCT(yytext,"Character Constant"); return CHAR_CONST;}
-[a-z|A-Z]([a-z|A-Z]|[0-9])*/\[ 	{yylval = yytext; insertST(yytext, "Array Identifier"); return ID;}
-[1-9][0-9]*|0/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\]|\}|:|\n|\t|\^] 	{yylval = yytext; insertCT(yytext, "Number Constant"); return NUM_CONST;}
-([0-9]*)\.([0-9]+)/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\n|\t|\^] 	{yylval = yytext; insertCT(yytext, "Floating Constant"); return FLT_CONST;}
-[A-Za-z_][A-Za-z_0-9]* {yylval = yytext; insertST(yytext, "Identifier"); return ID;}
+\"[^\n]*\"/[;|,|\)] 			{strcpy(curval,yytext); insertCT(yytext,"String Constant"); return STR_CONST;}
+\'[A-Z|a-z]\'/[;|,|\)|:] 		{strcpy(curval,yytext); insertCT(yytext,"Character Constant"); return CHAR_CONST;}
+[a-z|A-Z]([a-z|A-Z]|[0-9])*/\[ 	{strcpy(curid,yytext); insertST(yytext, "Array Identifier"); return ID;}
+[1-9][0-9]*|0/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\]|\}|:|\n|\t|\^] 	{strcpy(curval,yytext); insertCT(yytext, "Number Constant"); return NUM_CONST;}
+([0-9]*)\.([0-9]+)/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\n|\t|\^] 	{strcpy(curval,yytext); insertCT(yytext, "Floating Constant"); return FLT_CONST;}
+[A-Za-z_][A-Za-z_0-9]* {strcpy(curid,yytext);insertST(yytext,"Identifier");return ID;}
 
 
 
@@ -276,8 +307,3 @@ IN "include"
 }
 
 %%
-
-int yywrap()
-{
-	return 1;
-}
