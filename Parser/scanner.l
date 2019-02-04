@@ -223,22 +223,22 @@ IN "include"
 "."				{ return('.'); }
 
 "char"			{ strcpy(curtype,yytext); return CHAR;}
-"double"		{ strcpy(curtype,yytext);return DOUBLE;}
+"double"		{ strcpy(curtype,yytext); return DOUBLE;}
 "else"			{ return ELSE;}
-"float"			{ strcpy(curtype,yytext);return FLOAT;}
+"float"			{ strcpy(curtype,yytext); return FLOAT;}
 "while"			{ return WHILE;}
 "do"			{ return DO;}
 "for"			{ return FOR;}
 "if"			{ return IF;}
-"int"			{ strcpy(curtype,yytext);return INT;}
-"long"			{ strcpy(curtype,yytext);return LONG;}
+"int"			{ strcpy(curtype,yytext); return INT;}
+"long"			{ strcpy(curtype,yytext); return LONG;}
 "return"		{ return RETURN;}
-"short"			{ strcpy(curtype,yytext);return SHORT;}
-"signed"		{ strcpy(curtype,yytext);return SIGNED;}
+"short"			{ strcpy(curtype,yytext); return SHORT;}
+"signed"		{ strcpy(curtype,yytext); return SIGNED;}
 "sizeof" 		{ return SIZEOF;}
 "struct"		{ return STRUCT;}
 "unsigned"		{ return UNSIGNED;}
-"void"			{ return VOID;}
+"void"			{ strcpy(curtype,yytext); return VOID;}
 "break"			{ return BREAK;}
 
 

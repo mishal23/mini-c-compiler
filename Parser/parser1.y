@@ -9,10 +9,14 @@
 	void insV();
 	int flag=0;
 
+	extern char curid[20];
+	extern char curtype[20];
+	extern char curval[20];
+
 %}
 
 %token ID NUM_CONST STR_CONST FLT_CONST CHAR_CONST FOR WHILE IF ELSE STRUCT DO
-%token INT CHAR FLOAT DOUBLE LONG SHORT SIGNED UNSIGNED INCLUDE DEFINE VOID BREAK
+%token VOID INT CHAR FLOAT DOUBLE LONG SHORT SIGNED UNSIGNED INCLUDE DEFINE BREAK
 %token MAIN RETURN
 
 %right LEFT_ASSIGN RIGHT_ASSIGN
@@ -38,22 +42,39 @@
 %left INC_OP DEC_OP 
 
 
-%start PRG
+%start program
 
 %%
-PRG: DECL;
-DECL:DEC DECL | DEC;
-DEC: VDEC | FDEC;
-VDEC: TSPEC VDECL ';';
-VDECL: VDECID','VDECL | VDECID ;
+program: declaration_list;
+
+declaration_list
+			: declaration D 
+
+D: declaration_list
+			| ;
+
+declaration
+			: variable_declaration 
+			| function_declaration;
+
+variable_declaration
+			: type_specifier variable_declaration_list ';';
+
+variable_declaration_list
+			: VDECID V;
+V:			',' variable_declaration_list 
+			| ;
+
 VDECID : ID {ins();}| ID '[' NUM_CONST ']'{ins();} | EX{ins();} | ID '[' NUM_CONST ']' STR_INIT{ins();} | ID '[' ']' STR_INIT{ins();} | ID '[' NUM_CONST ']' ARR_INIT{ins();};
-TSPEC : INT|CHAR|FLOAT|DOUBLE|LONG|SHORT|UNSIGNED INT|UNSIGNED|UNSIGNED LONG|LONG INT|UNSIGNED LONG INT|SIGNED SHORT| UNSIGNED SHORT|SIGNED SHORT INT|UNSIGNED SHORT INT;
-FDEC : TSPEC ID '(' PARAMS ')' STMT {ins();};
+type_specifier : INT|CHAR|FLOAT|DOUBLE|LONG|SHORT|UNSIGNED INT|UNSIGNED|UNSIGNED LONG|LONG INT|UNSIGNED LONG INT|SIGNED SHORT| UNSIGNED SHORT|SIGNED SHORT INT|UNSIGNED SHORT INT|VOID;
+function_declaration : FUNC_DEC FUNC_PARAMS STMT;
+FUNC_DEC: type_specifier ID '(' { printf("In FUNC_DEC: %s %s\n", curid, curtype); ins();};
+FUNC_PARAMS: PARAMS ')';
 PARAMS : PARAMTL | ;
-PARAMTL : TSPEC PARAMIDL;
+PARAMTL : type_specifier PARAMIDL;
 PARAMIDL : PARAMID ',' PARAMTL | PARAMID ;
-PARAMID : ID {ins();} | ID '[' ']'{ins();};
-STMT : EXSTMT | CSTMT | SSTMT | ISTMT | RSTMT | BSTMT | VDEC;
+PARAMID : ID {printf("In PARAM: %s %s\n", curid, curtype); ins();} | ID '[' ']'{printf("In PARAM: %s\n", curid); ins();};
+STMT : EXSTMT | CSTMT | SSTMT | ISTMT | RSTMT | BSTMT | variable_declaration;
 CSTMT : '{' STMTL '}' ;
 STMTL : STMT STMTL | ;
 EXSTMT : EX ';'| ';';
@@ -88,13 +109,10 @@ extern FILE *yyin;
 extern int yylineno;
 extern char *yytext;
 void insertSTtype(char *,char *);
-extern char curid[20];
-extern char curtype[20];
-extern char curval[20];
+
 void incertCT(char *, char *);
 void printST();
 void printCT();
-
 
 int main(int argc , char **argv)
 {
@@ -111,8 +129,6 @@ int main(int argc , char **argv)
     printCT();
 
 }
-
-
 
 void yyerror(char *s)
 {

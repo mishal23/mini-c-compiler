@@ -1,11 +1,6 @@
 #include<stdio.h>
 
-/*struct pair{
-    int a;
-    int b;
-};*/
-
-int fun(int x){
+char fun(void x){
     return x*x;
 }
 
