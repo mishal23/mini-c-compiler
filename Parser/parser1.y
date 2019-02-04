@@ -45,12 +45,14 @@
 %start program
 
 %%
-program: declaration_list;
+program
+			: declaration_list;
 
 declaration_list
 			: declaration D 
 
-D: declaration_list
+D
+			: declaration_list
 			| ;
 
 declaration
@@ -64,16 +66,17 @@ variable_declaration
 variable_declaration_list
 			: variable_declaration_identifier V;
 
-V: ',' variable_declaration_list 
+V
+			: ',' variable_declaration_list 
 			| ;
 
 variable_declaration_identifier 
-			: identifier 					{ins();}
-			| identifier '[' integer_constant ']'	{ins();}
-			| expression					{ins();}
-			| identifier '[' integer_constant ']' string_initilization 	{ins();} 
-			| identifier '[' ']' string_initilization 				{ins();} 
-			| identifier '[' integer_constant ']' array_initialization 	{ins();};
+			: identifier 												{ ins(); }
+			| identifier '[' integer_constant ']'						{ ins(); }
+			| expression												{ ins(); }
+			| identifier '[' integer_constant ']' string_initilization 	{ ins(); } 
+			| identifier '[' ']' string_initilization 					{ ins(); } 
+			| identifier '[' integer_constant ']' array_initialization 	{ ins(); };
 
 
 type_specifier
@@ -90,12 +93,14 @@ structure_definition
 structure_declaration 
 			: STRUCT identifier variable_declaration_list;
 
-V : variable_declaration V ;
+V 
+			: variable_declaration V ;
 
 function_declaration 
 			: type_specifier identifier '(' params ')' statement;
 
-params : parameters_list | ;
+params 
+			: parameters_list | ;
 
 parameters_list 
 			: type_specifier parameters_identifier_list;
@@ -114,7 +119,8 @@ statement
 			| return_statement | break_statement 
 			| variable_declaration;
 
-compound_statement : '{' statment_list '}' ;
+compound_statement 
+			: '{' statment_list '}' ;
 
 statment_list 
 			: statement statment_list 
