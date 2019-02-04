@@ -208,8 +208,8 @@ IN "include"
 \n   {yylineno++;}
 ([#][" "]*({IN})[ ]*([<]?)([A-Za-z]+)[.]?([A-Za-z]*)([>]?))/["\n"|\/|" "|"\t"]	{ }
 ([#][" "]*({DE})[" "]*([A-Za-z]+)(" ")*[0-9]+)/["\n"|\/|" "|"\t"]				{ } 
-\/\/(.*)																		{	}
-\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/										{	}
+\/\/(.*)																		{ }
+\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/										{ }
 [ \n\t] ;
 ";"				{ return(';'); }
 ","				{ return(','); }
@@ -242,46 +242,46 @@ IN "include"
 "break"			{ return BREAK;}
 
 
-"++"			{ return INC_OP; }
-"--"			{ return DEC_OP; }
-"<<"			{ return LEFT_OP; }
-">>"			{ return RIGHT_OP; }
-"<="			{ return LE_OP; }
-"<"				{ return L_OP; }
-">="			{ return GE_OP; }
-">"				{ return G_OP; }
-"=="			{ return EQ_OP; }
-"!="			{ return NE_OP; }
-"&&"			{ return AND_OP; }
-"||"			{ return OR_OP; }
-"^"				{ return CARET; }
-"*="			{ return MUL_ASSIGN; }
-"/="			{ return DIV_ASSIGN; }
-"%="			{ return MOD_ASSIGN; }
-"+="			{ return ADD_ASSIGN; }
-"-="			{ return SUB_ASSIGN; }
-"<<="			{ return LEFT_ASSIGN; }
-">>="			{ return RIGHT_ASSIGN; }
-"&="			{ return AND_ASSIGN; }
-"^="			{ return XOR_ASSIGN; }
-"|="			{ return OR_ASSIGN; }
-"&"				{ return AMP; }
-"!"				{ return EXL; }
-"~"				{ return TILDE; }
-"-"				{ return MINUS; }
-"+"				{ return PLUS; }
-"*"				{ return MUL; }
-"/"				{ return DIV; }
-"%"				{ return MOD; }
-"|"				{ return PIPE; }
-\=				{ return ASSIGN;}
+"++"			{ return increment_operator; }
+"--"			{ return decrement_operator; }
+"<<"			{ return leftshift_operator; }
+">>"			{ return rightshift_operator; }
+"<="			{ return lessthan_assignment_operator; }
+"<"				{ return lessthan_operator; }
+">="			{ return greaterthan_assignment_operator; }
+">"				{ return greaterthan_operator; }
+"=="			{ return equality_operator; }
+"!="			{ return inequality_operator; }
+"&&"			{ return AND_operator; }
+"||"			{ return OR_operator; }
+"^"				{ return caret_operator; }
+"*="			{ return multiplication_assignment_operator; }
+"/="			{ return division_assignment_operator; }
+"%="			{ return modulo_assignment_operator; }
+"+="			{ return addition_assignment_operator; }
+"-="			{ return subtraction_assignment_operator; }
+"<<="			{ return leftshift_assignment_operator; }
+">>="			{ return rightshift_assignment_operator; }
+"&="			{ return AND_assignment_operator; }
+"^="			{ return XOR_assignment_operator; }
+"|="			{ return OR_assignment_operator; }
+"&"				{ return amp_operator; }
+"!"				{ return exclamation_operator; }
+"~"				{ return tilde_operator; }
+"-"				{ return subtract_operator; }
+"+"				{ return add_operator; }
+"*"				{ return multiplication_operator; }
+"/"				{ return division_operator; }
+"%"				{ return modulo_operator; }
+"|"				{ return pipe_operator; }
+\=				{ return assignment_operator;}
 
-\"[^\n]*\"/[;|,|\)] 			{strcpy(curval,yytext); insertCT(yytext,"String Constant"); return STR_CONST;}
-\'[A-Z|a-z]\'/[;|,|\)|:] 		{strcpy(curval,yytext); insertCT(yytext,"Character Constant"); return CHAR_CONST;}
-[a-z|A-Z]([a-z|A-Z]|[0-9])*/\[ 	{strcpy(curid,yytext); insertST(yytext, "Array Identifier"); return ID;}
-[1-9][0-9]*|0/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\]|\}|:|\n|\t|\^] 	{strcpy(curval,yytext); insertCT(yytext, "Number Constant"); return NUM_CONST;}
-([0-9]*)\.([0-9]+)/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\n|\t|\^] 	{strcpy(curval,yytext); insertCT(yytext, "Floating Constant"); return FLT_CONST;}
-[A-Za-z_][A-Za-z_0-9]* {strcpy(curid,yytext);insertST(yytext,"Identifier");return ID;}
+\"[^\n]*\"/[;|,|\)] 			{strcpy(curval,yytext); insertCT(yytext,"String Constant"); return string_constant;}
+\'[A-Z|a-z]\'/[;|,|\)|:] 		{strcpy(curval,yytext); insertCT(yytext,"Character Constant"); return character_constant;}
+[a-z|A-Z]([a-z|A-Z]|[0-9])*/\[ 	{strcpy(curid,yytext); insertST(yytext, "Array Identifier"); return identifier;}
+[1-9][0-9]*|0/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\]|\}|:|\n|\t|\^] 	{strcpy(curval,yytext); insertCT(yytext, "Number Constant"); return integer_constant;}
+([0-9]*)\.([0-9]+)/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\n|\t|\^] 	{strcpy(curval,yytext); insertCT(yytext, "Floating Constant"); return float_constant;}
+[A-Za-z_][A-Za-z_0-9]* {strcpy(curid,yytext);insertST(yytext,"Identifier"); return identifier;}
 
 
 
