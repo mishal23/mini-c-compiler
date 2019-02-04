@@ -1,10 +1,10 @@
 #include<stdio.h>
 
-char fun(void x){
+int fun(char x){
     return x*x;
 }
 
-int main(){
+void main(){
     int a=2,b,c,d,e,f,g,h;
 
     c=a+b;

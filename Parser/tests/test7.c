@@ -5,14 +5,16 @@ int square(int a)
 	return(a*a);
 }
 
-/*struct abc
+struct abc
 {
-	int a;
-	char b;
-};*/
+   int a;
+   char b;
+};
 
 int main()
 {
+	struct abc A;
+	A.a = 2;
 	int num = 2;
 	int num2 = square(num);
 	

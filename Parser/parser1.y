@@ -55,10 +55,11 @@ D: declaration_list
 
 declaration
 			: variable_declaration 
-			| function_declaration;
+			| function_declaration
+			| structure_definition;
 
 variable_declaration
-			: type_specifier variable_declaration_list ';';
+			: type_specifier variable_declaration_list ';' | structure_declaration;
 
 variable_declaration_list
 			: VDECID V;
@@ -66,14 +67,26 @@ V:			',' variable_declaration_list
 			| ;
 
 VDECID : ID {ins();}| ID '[' NUM_CONST ']'{ins();} | EX{ins();} | ID '[' NUM_CONST ']' STR_INIT{ins();} | ID '[' ']' STR_INIT{ins();} | ID '[' NUM_CONST ']' ARR_INIT{ins();};
-type_specifier : INT|CHAR|FLOAT|DOUBLE|LONG|SHORT|UNSIGNED INT|UNSIGNED|UNSIGNED LONG|LONG INT|UNSIGNED LONG INT|SIGNED SHORT| UNSIGNED SHORT|SIGNED SHORT INT|UNSIGNED SHORT INT|VOID;
-function_declaration : FUNC_DEC FUNC_PARAMS STMT;
-FUNC_DEC: type_specifier ID '(' { printf("In FUNC_DEC: %s %s\n", curid, curtype); ins();};
-FUNC_PARAMS: PARAMS ')';
+
+
+type_specifier :INT|CHAR|FLOAT|DOUBLE|LONG|SHORT|UNSIGNED INT|UNSIGNED|UNSIGNED LONG|LONG INT|UNSIGNED LONG INT|SIGNED SHORT| UNSIGNED SHORT|SIGNED SHORT INT|UNSIGNED SHORT INT|VOID|STRUCT;
+
+
+structure_definition : STRUCT ID {ins();}'{' V '}' ';';
+structure_declaration : STRUCT ID variable_declaration_list;
+V : variable_declaration V ;
+
+
+
+
+
+
+
+function_declaration :type_specifier ID '('PARAMS ')' STMT;
 PARAMS : PARAMTL | ;
 PARAMTL : type_specifier PARAMIDL;
 PARAMIDL : PARAMID ',' PARAMTL | PARAMID ;
-PARAMID : ID {printf("In PARAM: %s %s\n", curid, curtype); ins();} | ID '[' ']'{printf("In PARAM: %s\n", curid); ins();};
+PARAMID : ID {ins();} | ID '[' ']'{ins();};
 STMT : EXSTMT | CSTMT | SSTMT | ISTMT | RSTMT | BSTMT | variable_declaration;
 CSTMT : '{' STMTL '}' ;
 STMTL : STMT STMTL | ;
@@ -109,7 +122,7 @@ extern FILE *yyin;
 extern int yylineno;
 extern char *yytext;
 void insertSTtype(char *,char *);
-
+void insertSTvalue(char *, char *);
 void incertCT(char *, char *);
 void printST();
 void printCT();

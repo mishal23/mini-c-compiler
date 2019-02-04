@@ -236,7 +236,7 @@ IN "include"
 "short"			{ strcpy(curtype,yytext); return SHORT;}
 "signed"		{ strcpy(curtype,yytext); return SIGNED;}
 "sizeof" 		{ return SIZEOF;}
-"struct"		{ return STRUCT;}
+"struct"		{ strcpy(curtype,yytext);return STRUCT;}
 "unsigned"		{ return UNSIGNED;}
 "void"			{ strcpy(curtype,yytext); return VOID;}
 "break"			{ return BREAK;}
