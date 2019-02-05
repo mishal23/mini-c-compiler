@@ -117,8 +117,14 @@ structure_declaration
 V 
 			: variable_declaration V ;
 
-function_declaration 
-			: type_specifier identifier '(' params ')' statement;
+function_declaration
+			: function_declaration_type function_declaration_param_statement;
+
+function_declaration_type
+			: type_specifier identifier '('  { ins();};
+
+function_declaration_param_statement
+			: params ')' statement;
 
 params 
 			: parameters_list | ;
@@ -206,7 +212,6 @@ expression_breakup
 			| increment_operator 
 			| decrement_operator ;
 
-
 simple_expression 
 			: and_expression simple_expression_breakup;
 
@@ -214,8 +219,11 @@ simple_expression_breakup
 			: OR_operator and_expression simple_expression_breakup | ;
 
 and_expression 
-			: and_expression AND_operator unary_relation_expression 
-			| unary_relation_expression ;
+			: unary_relation_expression and_expression_breakup;
+
+and_expression_breakup
+			: AND_operator unary_relation_expression and_expression_breakup
+			| ;
 
 unary_relation_expression 
 			: exclamation_operator unary_relation_expression 

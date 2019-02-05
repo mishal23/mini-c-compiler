@@ -1,31 +1,12 @@
-//if-else
-//switch-case
-//++ operator, -- operator
-//return
-
-#include<stdio.h>
-
-int main()
+int a;
+int b[100];
+int c=3;
+char d[100] = "kjbk";
+char e[] ="jljlj";
+int f[10]={0};
+int g,h=3,i;
+int aa*=3;
+int myfunc()
 {
-    char a = 'm';
-    if(a == 'm') {
-        return 1;
-    } else {
-        a++;
-    }
 
-    switch(a) {
-        case 'l':
-            a++;
-            break;
-        case 'm':
-            a--;
-            break;
-        case 'n':
-            a = a + 2;
-            break;
-        default:
-            a = a + 3;
-    }
-    printf("%c",a);
 }

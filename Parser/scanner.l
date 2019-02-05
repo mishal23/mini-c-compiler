@@ -10,6 +10,7 @@
 		char class[100];
 		char type[100];
 		char value[100];
+		int lineno;
 		int length;
 	}ST[1001];
 
@@ -136,6 +137,19 @@
 		
     }
 
+    void insertSTline(char *str1, int line)
+	{
+		for(int i = 0 ; i < 1001 ; i++)
+		{
+			if(strcmp(ST[i].name,str1)==0)
+			{
+				ST[i].lineno = line;
+			}
+		}
+		
+    }
+
+
 
     void insertCT(char *str1, char *str2)
 	{
@@ -178,7 +192,7 @@
     			continue;
     	    }
 
-    		printf("%s\t%s\t%s\t%s\n",ST[i].name, ST[i].class, ST[i].type, ST[i].value);
+    		printf("%s\t%s\t%s\t%s\t%d\n",ST[i].name, ST[i].class, ST[i].type, ST[i].value, ST[i].lineno);
     	}
 
     }
@@ -197,7 +211,6 @@
     char curid[20];
     char curtype[20];
     char curval[20];
-
 
 %}
 
@@ -222,24 +235,24 @@ IN "include"
 ":"				{ return(':'); }
 "."				{ return('.'); }
 
-"char"			{ strcpy(curtype,yytext); return CHAR;}
-"double"		{ strcpy(curtype,yytext); return DOUBLE;}
-"else"			{ return ELSE;}
-"float"			{ strcpy(curtype,yytext); return FLOAT;}
-"while"			{ return WHILE;}
-"do"			{ return DO;}
-"for"			{ return FOR;}
-"if"			{ return IF;}
-"int"			{ strcpy(curtype,yytext); return INT;}
-"long"			{ strcpy(curtype,yytext); return LONG;}
-"return"		{ return RETURN;}
-"short"			{ strcpy(curtype,yytext); return SHORT;}
-"signed"		{ strcpy(curtype,yytext); return SIGNED;}
-"sizeof" 		{ return SIZEOF;}
-"struct"		{ strcpy(curtype,yytext);return STRUCT;}
-"unsigned"		{ return UNSIGNED;}
-"void"			{ strcpy(curtype,yytext); return VOID;}
-"break"			{ return BREAK;}
+"char"			{ strcpy(curtype,yytext); insertSTline(yytext, yylineno); insertST(yytext, "Keyword"); return CHAR;}
+"double"		{ strcpy(curtype,yytext); insertSTline(yytext, yylineno); insertST(yytext, "Keyword"); return DOUBLE;}
+"else"			{ insertSTline(yytext, yylineno); insertST(yytext, "Keyword"); return ELSE;}
+"float"			{ strcpy(curtype,yytext); insertST(yytext, "Keyword"); insertSTline(yytext, yylineno); return FLOAT;}
+"while"			{ insertST(yytext, "Keyword"); insertSTline(yytext, yylineno); return WHILE;}
+"do"			{ insertST(yytext, "Keyword"); insertSTline(yytext, yylineno); return DO;}
+"for"			{ insertST(yytext, "Keyword"); insertSTline(yytext, yylineno); return FOR;}
+"if"			{ insertST(yytext, "Keyword"); insertSTline(yytext, yylineno); return IF;}
+"int"			{ strcpy(curtype,yytext); insertST(yytext, "Keyword"); insertSTline(yytext, yylineno); return INT;}
+"long"			{ strcpy(curtype,yytext); insertST(yytext, "Keyword"); insertSTline(yytext, yylineno); return LONG;}
+"return"		{ insertST(yytext, "Keyword"); insertSTline(yytext, yylineno); return RETURN;}
+"short"			{ strcpy(curtype,yytext); insertST(yytext, "Keyword"); insertSTline(yytext, yylineno); return SHORT;}
+"signed"		{ strcpy(curtype,yytext); insertST(yytext, "Keyword"); insertSTline(yytext, yylineno); return SIGNED;}
+"sizeof" 		{ insertST(yytext, "Keyword"); insertSTline(yytext, yylineno); return SIZEOF;}
+"struct"		{ strcpy(curtype,yytext); insertST(yytext, "Keyword"); insertSTline(yytext, yylineno); return STRUCT;}
+"unsigned"		{ insertST(yytext, "Keyword"); insertSTline(yytext, yylineno); return UNSIGNED;}
+"void"			{ strcpy(curtype,yytext); insertST(yytext, "Keyword"); insertSTline(yytext, yylineno); return VOID;}
+"break"			{ insertST(yytext, "Keyword"); insertSTline(yytext, yylineno); return BREAK;}
 
 
 "++"			{ return increment_operator; }
@@ -278,10 +291,10 @@ IN "include"
 
 \"[^\n]*\"/[;|,|\)] 			{strcpy(curval,yytext); insertCT(yytext,"String Constant"); return string_constant;}
 \'[A-Z|a-z]\'/[;|,|\)|:] 		{strcpy(curval,yytext); insertCT(yytext,"Character Constant"); return character_constant;}
-[a-z|A-Z]([a-z|A-Z]|[0-9])*/\[ 	{strcpy(curid,yytext); insertST(yytext, "Array Identifier"); return identifier;}
+[a-z|A-Z]([a-z|A-Z]|[0-9])*/\[ 	{strcpy(curid,yytext); insertST(yytext, "Array Identifier"); insertSTline(yytext,yylineno); return identifier;}
 [1-9][0-9]*|0/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\]|\}|:|\n|\t|\^] 	{strcpy(curval,yytext); insertCT(yytext, "Number Constant"); return integer_constant;}
 ([0-9]*)\.([0-9]+)/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\n|\t|\^] 	{strcpy(curval,yytext); insertCT(yytext, "Floating Constant"); return float_constant;}
-[A-Za-z_][A-Za-z_0-9]* {strcpy(curid,yytext);insertST(yytext,"Identifier"); return identifier;}
+[A-Za-z_][A-Za-z_0-9]* {strcpy(curid,yytext);insertST(yytext,"Identifier"); insertSTline(yytext,yylineno); return identifier;}
 
 
 
