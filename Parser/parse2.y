@@ -57,12 +57,10 @@ D
 
 declaration
 			: variable_declaration 
-			| function_declaration
-			| structure_definition;
+			| function_declaration;
 
 variable_declaration
-			: type_specifier variable_declaration_list ';' 
-			| structure_declaration;
+			: type_specifier variable_declaration_list ';' ;
 
 variable_declaration_list
 			: variable_declaration_identifier V;
@@ -107,12 +105,6 @@ long_grammar
 
 short_grammar 
 			: INT | ;
-
-structure_definition
-			: STRUCT identifier { ins(); } '{' V '}' ';';
-
-structure_declaration 
-			: STRUCT identifier variable_declaration_list;
 
 V 
 			: variable_declaration V ;

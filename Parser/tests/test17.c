@@ -5,6 +5,7 @@ char d[100] = "kjbk";
 char e[] ="jljlj";
 int f[10]={0};
 int g,h=3,i;
+int aa*=3;
 int myfunc()
 {
 
