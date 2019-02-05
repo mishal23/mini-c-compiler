@@ -3,6 +3,13 @@
 	#include <string.h>
 	#include "y.tab.h"
 
+	#define ANSI_COLOR_RED		"\x1b[31m"
+	#define ANSI_COLOR_GREEN	"\x1b[32m"
+	#define ANSI_COLOR_YELLOW	"\x1b[33m"
+	#define ANSI_COLOR_BLUE		"\x1b[34m"
+	#define ANSI_COLOR_MAGENTA	"\x1b[35m"
+	#define ANSI_COLOR_CYAN		"\x1b[36m"
+	#define ANSI_COLOR_RESET	"\x1b[0m"
 
 	struct symboltable
 	{
@@ -149,8 +156,6 @@
 		
     }
 
-
-
     void insertCT(char *str1, char *str2)
 	{
 		if(lookupCT(str1))
@@ -185,6 +190,11 @@
 
     void printST()
     {
+    	printf("%10s | %15s | %10s | %10s | %10s\n","SYMBOL", "CLASS", "TYPE","VALUE", "LINE NO");
+    	for(int i=0;i<81;i++) {
+        	printf("-");
+    	}
+    	printf("\n");
     	for(int i = 0 ; i < 1001 ; i++)
     	{
     		if(ST[i].length == 0)
@@ -192,7 +202,7 @@
     			continue;
     	    }
 
-    		printf("%s\t%s\t%s\t%s\t%d\n",ST[i].name, ST[i].class, ST[i].type, ST[i].value, ST[i].lineno);
+    		printf("%10s | %15s | %10s | %10s | %10d\n",ST[i].name, ST[i].class, ST[i].type, ST[i].value, ST[i].lineno);
     	}
 
     }
@@ -200,12 +210,17 @@
 
     void printCT()
     {
+    	printf("%10s | %15s\n","NAME", "TYPE");
+    	for(int i=0;i<81;i++) {
+        	printf("-");
+    	}
+    	printf("\n");
     	for(int i = 0 ; i < 1001 ; i++)
     	{
     		if(CT[i].length == 0)
     			continue;
 
-    		printf("%s\t%s\n",CT[i].name, CT[i].type);
+    		printf("%10s | %15s\n",CT[i].name, CT[i].type);
     	}
     }
     char curid[20];
