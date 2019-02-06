@@ -4,12 +4,12 @@ struct student
 {
   int rollNum;
   int marks;
-}student1;
+};
 
 int main()
 {
  int a = 1, b=0;
-
+ struct student student1;
  student1.rollNum = 1;
  student1.marks = 90;
 

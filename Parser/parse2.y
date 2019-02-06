@@ -9,15 +9,36 @@
 	void insV();
 	int flag=0;
 
+	#define ANSI_COLOR_RED		"\x1b[31m"
+	#define ANSI_COLOR_GREEN	"\x1b[32m"
+	#define ANSI_COLOR_YELLOW	"\x1b[33m"
+	#define ANSI_COLOR_BLUE		"\x1b[34m"
+	#define ANSI_COLOR_MAGENTA	"\x1b[35m"
+	#define ANSI_COLOR_CYAN		"\x1b[36m"
+	#define ANSI_COLOR_RESET	"\x1b[0m"
+
 	extern char curid[20];
 	extern char curtype[20];
 	extern char curval[20];
 
 %}
 
-%token identifier integer_constant string_constant float_constant character_constant FOR WHILE IF ELSE STRUCT DO
-%token VOID INT CHAR FLOAT DOUBLE LONG SHORT SIGNED UNSIGNED INCLUDE DEFINE BREAK
-%token MAIN RETURN
+
+
+
+
+%nonassoc IF
+%token INT CHAR FLOAT DOUBLE LONG SHORT SIGNED UNSIGNED STRUCT
+%token RETURN MAIN
+%token VOID
+%token WHILE FOR DO 
+%token BREAK
+%token ENDIF
+
+%token identifier
+%token integer_constant string_constant float_constant character_constant
+
+%nonassoc ELSE
 
 %right leftshift_assignment_operator rightshift_assignment_operator
 %right XOR_assignment_operator OR_assignment_operator
@@ -56,11 +77,13 @@ D
 			| ;
 
 declaration
-			: variable_declaration 
-			| function_declaration;
+			: variable_declaration
+			| function_declaration 
+			| structure_definition;
 
 variable_declaration
-			: type_specifier variable_declaration_list ';' ;
+			: type_specifier variable_declaration_list';'
+			| structure_declaration;
 
 variable_declaration_list
 			: variable_declaration_identifier V;
@@ -70,8 +93,9 @@ V
 			| ;
 
 variable_declaration_identifier 
-			: identifier { ins(); } identifier_array_type
-			| expression { ins(); };
+			: identifier { ins(); } vdi;
+
+vdi : identifier_array_type | assignment_operator expression ;
 
 identifier_array_type
 			: '[' initilization_params
@@ -92,7 +116,7 @@ type_specifier
 			| SHORT short_grammar
 			| UNSIGNED unsigned_grammar 
 			| SIGNED signed_grammar
-			| VOID | STRUCT;
+			| VOID;
 
 unsigned_grammar 
 			: INT | LONG long_grammar | SHORT short_grammar | ;
@@ -106,11 +130,29 @@ long_grammar
 short_grammar 
 			: INT | ;
 
-V 
-			: variable_declaration V ;
 
-function_declaration 
-			: type_specifier identifier '(' params ')' statement;
+string_initilization
+			: assignment_operator string_constant { insV(); };
+
+array_initialization
+			: assignment_operator '{' array_int_declarations '}';
+
+array_int_declarations
+			: integer_constant array_int_declarations_breakup;
+
+array_int_declarations_breakup
+			: ',' array_int_declarations 
+			| ;
+
+
+function_declaration
+			: function_declaration_type function_declaration_param_statement;
+
+function_declaration_type
+			: type_specifier identifier '('  { ins();};
+
+function_declaration_param_statement
+			: params ')'statement;
 
 params 
 			: parameters_list | ;
@@ -132,25 +174,19 @@ param_identifier_breakup
 			: '[' ']'
 			| ;
 
+structure_definition
+			: STRUCT identifier { ins(); } '{' variable_declaration '}' ';';
+
+
+structure_declaration 
+			: STRUCT identifier variable_declaration_list;
+
 statement 
-			: expression_statment | compound_statement 
-			| conditional_statements | iterative_statements 
-			| return_statement | break_statement 
-			| variable_declaration;
+			:compound_statement| variable_declaration | expression_statment | conditional_statements | iterative_statements | return_statement | break_statement;
 
-compound_statement 
-			: '{' statment_list '}' ;
-
-statment_list 
-			: statement statment_list 
-			| ;
-
-expression_statment 
-			: expression ';' 
-			| ';' ;
 
 conditional_statements 
-			: IF '(' simple_expression ')' statement conditional_statements_breakup;
+			: IF '(' simple_expression ')' statement  conditional_statements_breakup;
 
 conditional_statements_breakup
 			: ELSE statement 
@@ -171,22 +207,31 @@ return_statement_breakup
 break_statement 
 			: BREAK ';' ;
 
-string_initilization
-			: assignment_operator string_constant { insV(); };
 
-array_initialization
-			: assignment_operator '{' array_int_declarations '}';
 
-array_int_declarations
-			: integer_constant array_int_declarations_breakup;
+compound_statement 
+			: '{' statment_list '}' ;
 
-array_int_declarations_breakup
-			: ',' array_int_declarations 
+statment_list 
+			: statement statment_list 
 			| ;
+
+expression_statment 
+			: expression ';' 
+			| ';' ;
 
 expression 
 			: mutable expression_breakup
-			| simple_expression ;
+            | simple_expression ;			  ;
+
+mutable 
+			: identifier 
+			| mutable mutable_breakup;
+
+mutable_breakup
+			: '[' expression ']' 
+			| '.' identifier;
+
 
 expression_breakup
 			: assignment_operator expression 
@@ -198,16 +243,18 @@ expression_breakup
 			| increment_operator 
 			| decrement_operator ;
 
-
-simple_expression 
+simple_expression
 			: and_expression simple_expression_breakup;
 
 simple_expression_breakup 
 			: OR_operator and_expression simple_expression_breakup | ;
 
 and_expression 
-			: and_expression AND_operator unary_relation_expression 
-			| unary_relation_expression ;
+			: unary_relation_expression and_expression_breakup;
+
+and_expression_breakup
+			: AND_operator unary_relation_expression and_expression_breakup
+			| ;
 
 unary_relation_expression 
 			: exclamation_operator unary_relation_expression 
@@ -240,15 +287,7 @@ MULOP
 			: multiplication_operator | division_operator | modulo_operator ;
 
 factor 
-			: immutable | mutable ;
-
-mutable 
-			: identifier 
-			| mutable mutable_breakup;
-
-mutable_breakup
-			: '[' expression ']' 
-			| '.' identifier;
+			: immutable |mutable ;
 
 immutable 
 			: '(' expression ')' 
@@ -273,6 +312,12 @@ constant
 			| float_constant	{ insV(); } 
 			| character_constant{ insV(); };
 
+
+
+
+
+
+
 %%
 
 extern FILE *yyin;
@@ -291,19 +336,23 @@ int main(int argc , char **argv)
 
 	if(flag == 0)
 	{
-		printf("Valid\n");
+		printf(ANSI_COLOR_GREEN "Status: Parsing Complete - Valid" ANSI_COLOR_RESET "\n");
+		printf("%30s" ANSI_COLOR_CYAN "SYMBOL TABLE" ANSI_COLOR_RESET "\n", " ");
+	    printf("%30s %s\n", " ", "------------");
+	    printST();
+
+	    printf("\n\n%30s" ANSI_COLOR_CYAN "CONSTANT TABLE" ANSI_COLOR_RESET "\n", " ");
+	    printf("%30s %s\n", " ", "--------------");
+	    printCT();
     }
-    printf("----------Symbol Table-----------------\n");
-    printST();
-    printf("----------Constant Table----------------\n");
-    printCT();
+    
 }
 
 void yyerror(char *s)
 {
 	printf("%d %s %s\n", yylineno, s, yytext);
 	flag=1;
-	printf("Invalid\n");
+	printf(ANSI_COLOR_RED "Status: Parsing Failed - Invalid\n" ANSI_COLOR_RESET);
 }
 
 void ins()

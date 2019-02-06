@@ -23,9 +23,19 @@
 
 %}
 
-%token identifier integer_constant string_constant float_constant character_constant FOR WHILE IF ELSE STRUCT DO
-%token VOID INT CHAR FLOAT DOUBLE LONG SHORT SIGNED UNSIGNED INCLUDE DEFINE BREAK
-%token MAIN RETURN
+%nonassoc IF
+%token INT CHAR FLOAT DOUBLE LONG SHORT SIGNED UNSIGNED STRUCT
+%token RETURN MAIN
+%token VOID
+%token WHILE FOR DO 
+%token BREAK
+%token ENDIF
+%expect 2
+
+%token identifier
+%token integer_constant string_constant float_constant character_constant
+
+%nonassoc ELSE
 
 %right leftshift_assignment_operator rightshift_assignment_operator
 %right XOR_assignment_operator OR_assignment_operator
@@ -80,8 +90,9 @@ V
 			| ;
 
 variable_declaration_identifier 
-			: identifier { ins(); } identifier_array_type
-			| expression { ins(); };
+			: identifier { ins(); } vdi;
+
+vdi : identifier_array_type | assignment_operator expression ; 
 
 identifier_array_type
 			: '[' initilization_params
@@ -102,7 +113,7 @@ type_specifier
 			| SHORT short_grammar
 			| UNSIGNED unsigned_grammar 
 			| SIGNED signed_grammar
-			| VOID | STRUCT;
+			| VOID ;
 
 unsigned_grammar 
 			: INT | LONG long_grammar | SHORT short_grammar | ;
@@ -117,13 +128,13 @@ short_grammar
 			: INT | ;
 
 structure_definition
-			: STRUCT identifier { ins(); } '{' V '}' ';';
+			: STRUCT identifier { ins(); } '{' V1  '}' ';';
+
+V1 : variable_declaration V1 | ;
 
 structure_declaration 
 			: STRUCT identifier variable_declaration_list;
 
-V 
-			: variable_declaration V ;
 
 function_declaration
 			: function_declaration_type function_declaration_param_statement;
@@ -175,7 +186,7 @@ conditional_statements
 			: IF '(' simple_expression ')' statement conditional_statements_breakup;
 
 conditional_statements_breakup
-			: ELSE statement 
+			: ELSE statement
 			| ;
 
 iterative_statements 
