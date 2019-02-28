@@ -36,8 +36,7 @@
 			value = 10*value + (str[i] - 'A');
 			value = value % 1001;
 			while(value < 0)
-			value = value + 1001;
-
+				value = value + 1001;
 		}
 		return value;
 	}
@@ -51,47 +50,47 @@
 		}
 		else if(strcmp(ST[value].name,str)==0)
 		{	
-		    return 1;
+			return 1;
 		}
 		else
 		{
 			for(int i = value + 1 ; i!=value ; i = (i+1)%1001)
-	    	{
-	    		if(strcmp(ST[i].name,str)==0)
-	    		{
-	    			return 1;
-	    		}
-	    	}
-	    	return 0;
-	    }
+			{
+				if(strcmp(ST[i].name,str)==0)
+				{
+					return 1;
+				}
+			}
+			return 0;
+		}
 	}
 
 	int lookupCT(char *str)
 	{
 		int value = hash(str);
 		if(CT[value].length == 0)
-		    return 0;
+			return 0;
 		else if(strcmp(CT[value].name,str)==0)
-		    return 1;
+			return 1;
 		else
-	    {
-	    	for(int i = value + 1 ; i!=value ; i = (i+1)%1001)
-	    	{
-	    		if(strcmp(CT[i].name,str)==0)
-	    		{
-	    			return 1;
-	    		}
-	    	}
-	    	return 0;
-	    }
+		{
+			for(int i = value + 1 ; i!=value ; i = (i+1)%1001)
+			{
+				if(strcmp(CT[i].name,str)==0)
+				{
+					return 1;
+				}
+			}
+			return 0;
+		}
 	}
 
 	void insertST(char *str1, char *str2)
 	{
 		if(lookupST(str1))
 		{
-		    return;
-	    }
+			return;
+		}
 		else
 		{
 			int value = hash(str1);
@@ -104,24 +103,24 @@
 				return;
 			}
 
-            int pos = 0;
+			int pos = 0;
 
-            for (int i = value + 1 ; i!=value ; i = (i+1)%1001)
-            {
-            	if(ST[i].length == 0)
-            	{
-            		pos = i;
-            		break;
-            	}
-            }
+			for (int i = value + 1 ; i!=value ; i = (i+1)%1001)
+			{
+				if(ST[i].length == 0)
+				{
+					pos = i;
+					break;
+				}
+			}
 
-            strcpy(ST[pos].name,str1);
-            strcpy(ST[pos].class,str2);
-            ST[pos].length = strlen(str1);
+			strcpy(ST[pos].name,str1);
+			strcpy(ST[pos].class,str2);
+			ST[pos].length = strlen(str1);
 		}
-    }
+	}
 
-    void insertSTtype(char *str1, char *str2)
+	void insertSTtype(char *str1, char *str2)
 	{
 		for(int i = 0 ; i < 1001 ; i++)
 		{
@@ -130,10 +129,9 @@
 				strcpy(ST[i].type,str2);
 			}
 		}
-		
     }
 
-    void insertSTvalue(char *str1, char *str2)
+	void insertSTvalue(char *str1, char *str2)
 	{
 		for(int i = 0 ; i < 1001 ; i++)
 		{
@@ -142,10 +140,9 @@
 				strcpy(ST[i].value,str2);
 			}
 		}
-		
-    }
+	}
 
-    void insertSTline(char *str1, int line)
+	void insertSTline(char *str1, int line)
 	{
 		for(int i = 0 ; i < 1001 ; i++)
 		{
@@ -154,10 +151,9 @@
 				ST[i].lineno = line;
 			}
 		}
-		
-    }
+	}
 
-    void insertCT(char *str1, char *str2)
+	void insertCT(char *str1, char *str2)
 	{
 		if(lookupCT(str1))
 			return;
@@ -172,61 +168,59 @@
 				return;
 			}
 
-            int pos = 0;
+			int pos = 0;
 
-            for (int i = value + 1 ; i!=value ; i = (i+1)%1001)
-            {
-            	if(CT[i].length == 0)
-            	{
-            		pos = i;
-            		break;
-            	}
-            }
+			for (int i = value + 1 ; i!=value ; i = (i+1)%1001)
+			{
+				if(CT[i].length == 0)
+				{
+					pos = i;
+					break;
+				}
+			}
 
-            strcpy(CT[pos].name,str1);
-            strcpy(CT[pos].type,str2);
-            CT[pos].length = strlen(str1);
+			strcpy(CT[pos].name,str1);
+			strcpy(CT[pos].type,str2);
+			CT[pos].length = strlen(str1);
+		}
+	}
+
+	void printST()
+	{
+		printf("%10s | %15s | %10s | %10s | %10s\n","SYMBOL", "CLASS", "TYPE","VALUE", "LINE NO");
+		for(int i=0;i<81;i++) {
+			printf("-");
+		}
+		printf("\n");
+		for(int i = 0 ; i < 1001 ; i++)
+		{
+			if(ST[i].length == 0)
+			{
+				continue;
+			}
+			printf("%10s | %15s | %10s | %10s | %10d\n",ST[i].name, ST[i].class, ST[i].type, ST[i].value, ST[i].lineno);
 		}
     }
 
-    void printST()
-    {
-    	printf("%10s | %15s | %10s | %10s | %10s\n","SYMBOL", "CLASS", "TYPE","VALUE", "LINE NO");
-    	for(int i=0;i<81;i++) {
-        	printf("-");
-    	}
-    	printf("\n");
-    	for(int i = 0 ; i < 1001 ; i++)
-    	{
-    		if(ST[i].length == 0)
-    		{
-    			continue;
-    	    }
 
-    		printf("%10s | %15s | %10s | %10s | %10d\n",ST[i].name, ST[i].class, ST[i].type, ST[i].value, ST[i].lineno);
-    	}
+	void printCT()
+	{
+		printf("%10s | %15s\n","NAME", "TYPE");
+		for(int i=0;i<81;i++) {
+			printf("-");
+		}
+		printf("\n");
+		for(int i = 0 ; i < 1001 ; i++)
+		{
+			if(CT[i].length == 0)
+				continue;
 
-    }
-
-
-    void printCT()
-    {
-    	printf("%10s | %15s\n","NAME", "TYPE");
-    	for(int i=0;i<81;i++) {
-        	printf("-");
-    	}
-    	printf("\n");
-    	for(int i = 0 ; i < 1001 ; i++)
-    	{
-    		if(CT[i].length == 0)
-    			continue;
-
-    		printf("%10s | %15s\n",CT[i].name, CT[i].type);
-    	}
-    }
-    char curid[20];
-    char curtype[20];
-    char curval[20];
+			printf("%10s | %15s\n",CT[i].name, CT[i].type);
+		}
+	}
+	char curid[20];
+	char curtype[20];
+	char curval[20];
 
 %}
 
@@ -234,7 +228,7 @@ DE "define"
 IN "include"
 
 %%
-\n   {yylineno++;}
+\n 	{yylineno++;}
 ([#][" "]*({IN})[ ]*([<]?)([A-Za-z]+)[.]?([A-Za-z]*)([>]?))/["\n"|\/|" "|"\t"]	{ }
 ([#][" "]*({DE})[" "]*([A-Za-z]+)(" ")*[0-9]+)/["\n"|\/|" "|"\t"]				{ } 
 \/\/(.*)																		{ }
@@ -312,27 +306,25 @@ IN "include"
 ([0-9]*)\.([0-9]+)/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\n|\t|\^] 	{strcpy(curval,yytext); insertCT(yytext, "Floating Constant"); return float_constant;}
 [A-Za-z_][A-Za-z_0-9]* {strcpy(curid,yytext);insertST(yytext,"Identifier");  return identifier;}
 
-
-
 (.?) {
 		if(yytext[0]=='#')
 		{
-       		printf("Error in Pre-Processor directive at line no. %d\n",yylineno);
-       	}
-	    else if(yytext[0]=='/')
-	    {
-       		printf("ERR_UNMATCHED_COMMENT at line no. %d\n",yylineno);
-       	}
-       	else if(yytext[0]=='"')
-       	{
-       		printf("ERR_INCOMPLETE_STRING at line no. %d\n",yylineno);
-       	}
-       	else
-       	{
-       		printf("ERROR at line no. %d\n",yylineno);
-       	}
-       	printf("%s\n", yytext);
-       	return 0;
+			printf("Error in Pre-Processor directive at line no. %d\n",yylineno);
+		}
+		else if(yytext[0]=='/')
+		{
+			printf("ERR_UNMATCHED_COMMENT at line no. %d\n",yylineno);
+		}
+		else if(yytext[0]=='"')
+		{
+			printf("ERR_INCOMPLETE_STRING at line no. %d\n",yylineno);
+		}
+		else
+		{
+			printf("ERROR at line no. %d\n",yylineno);
+		}
+		printf("%s\n", yytext);
+		return 0;
 }
 
 %%
