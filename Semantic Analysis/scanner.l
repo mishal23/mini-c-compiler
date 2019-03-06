@@ -30,6 +30,7 @@
 	}CT[1001];
 
 	int currnest = 0;
+	extern int yylval;
 
 	int hash(char *str)
 	{
@@ -58,6 +59,8 @@
 				printf("Duplicate %s\n",str);
 				exit(0);
 			}
+			if(strcmp(ST[value].class,"Identifier")==0)
+			return 0;
 			return 1;
 		}
 		else
@@ -71,7 +74,9 @@
 						printf("Duplicate %s\n",str);
 						exit(0);
 					}
-					return 1;
+					if(strcmp(ST[i].class,"Identifier")==0)
+					return 0;
+			        return 1;
 				}
 			}
 			return 0;
@@ -170,7 +175,7 @@
 	{
 		for(int i = 0 ; i < 1001 ; i++)
 		{
-			if(strcmp(ST[i].name,s)==0)
+			if(strcmp(ST[i].name,s)==0 && !ST[i].nestval)
 			{
 				ST[i].nestval = nest;
 			}
@@ -253,9 +258,9 @@
 
 	int duplicate(int index)
 	{
-		printf("%s\n",ST[index].name);
-		if(ST[index].nestval == currnest)
+		if(ST[index].nestval == currnest && strcmp(ST[index].class,"Identifier") == 0)
 		{
+			printf("%s\n",ST[index].name);
 			return 1;
 		}
 		return 0;
@@ -321,23 +326,23 @@ IN "include"
 ":"				{ return(':'); }
 "."				{ return('.'); }
 
-"char"			{ strcpy(curtype,yytext);  return CHAR;}
-"double"		{ strcpy(curtype,yytext);  return DOUBLE;}
-"else"			{ insertSTline(yytext, yylineno); insertST(yytext, "Keyword"); return ELSE;}
-"float"			{ strcpy(curtype,yytext); return FLOAT;}
+"char"			{ strcpy(curtype,yytext); insertST(yytext, "Keyword");return CHAR;}
+"double"		{ strcpy(curtype,yytext); insertST(yytext, "Keyword"); return DOUBLE;}
+"else"			{ insertST(yytext, "Keyword"); return ELSE;}
+"float"			{ strcpy(curtype,yytext); insertST(yytext, "Keyword"); return FLOAT;}
 "while"			{ insertST(yytext, "Keyword"); return WHILE;}
 "do"			{ insertST(yytext, "Keyword"); return DO;}
 "for"			{ insertST(yytext, "Keyword"); return FOR;}
 "if"			{ insertST(yytext, "Keyword"); return IF;}
-"int"			{ strcpy(curtype,yytext); return INT;}
-"long"			{ strcpy(curtype,yytext); insertST(yytext, "Keyword");  return LONG;}
-"return"		{ insertST(yytext, "Keyword");  return RETURN;}
-"short"			{ strcpy(curtype,yytext); insertST(yytext, "Keyword");  return SHORT;}
-"signed"		{ strcpy(curtype,yytext); insertST(yytext, "Keyword");  return SIGNED;}
-"sizeof" 		{ insertST(yytext, "Keyword");  return SIZEOF;}
-"struct"		{ strcpy(curtype,yytext);   return STRUCT;}
-"unsigned"		{ insertST(yytext, "Keyword");  return UNSIGNED;}
-"void"			{ strcpy(curtype,yytext);   return VOID;}
+"int"			{ strcpy(curtype,yytext); insertST(yytext, "Keyword"); return INT;}
+"long"			{ strcpy(curtype,yytext); insertST(yytext, "Keyword"); return LONG;}
+"return"		{ insertST(yytext, "Keyword"); return RETURN;}
+"short"			{ strcpy(curtype,yytext); insertST(yytext, "Keyword"); return SHORT;}
+"signed"		{ strcpy(curtype,yytext); insertST(yytext, "Keyword"); return SIGNED;}
+"sizeof" 		{ insertST(yytext, "Keyword"); return SIZEOF;}
+"struct"		{ strcpy(curtype,yytext);   insertST(yytext, "Keyword");  return STRUCT;}
+"unsigned"		{ insertST(yytext, "Keyword");   return UNSIGNED;}
+"void"			{ strcpy(curtype,yytext);   insertST(yytext, "Keyword");  return VOID;}
 "break"			{ insertST(yytext, "Keyword");  return BREAK;}
 
 
@@ -378,7 +383,7 @@ IN "include"
 \"[^\n]*\"/[;|,|\)] 			{strcpy(curval,yytext); insertCT(yytext,"String Constant"); return string_constant;}
 \'[A-Z|a-z]\'/[;|,|\)|:] 		{strcpy(curval,yytext); insertCT(yytext,"Character Constant"); return character_constant;}
 [a-z|A-Z]([a-z|A-Z]|[0-9])*/\[ 	{strcpy(curid,yytext); insertST(yytext, "Array Identifier");insertSTnest(yytext,currnest);  return identifier;}
-[1-9][0-9]*|0/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\]|\}|:|\n|\t|\^] 	{strcpy(curval,yytext); insertCT(yytext, "Number Constant"); return integer_constant;}
+[1-9][0-9]*|0/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\]|\}|:|\n|\t|\^] 	{strcpy(curval,yytext); insertCT(yytext, "Number Constant"); yylval = atoi(yytext); return integer_constant;}
 ([0-9]*)\.([0-9]+)/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\n|\t|\^] 	{strcpy(curval,yytext); insertCT(yytext, "Floating Constant"); return float_constant;}
 [A-Za-z_][A-Za-z_0-9]* {strcpy(curid,yytext);  return identifier;}
 

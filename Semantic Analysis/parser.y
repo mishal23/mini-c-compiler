@@ -103,7 +103,7 @@ identifier_array_type
 			| ;
 
 initilization_params
-			: integer_constant ']' initilization
+			: integer_constant ']' initilization {if($$ < 1) {printf("Wrong array size\n"); exit(0);} }
 			| ']' string_initilization;
 
 initilization
@@ -112,27 +112,27 @@ initilization
 			| ;
 
 type_specifier 
-			: INT {insertST(curtype, "Keyword");} | CHAR {insertST(curtype, "Keyword");} | FLOAT {insertST(curtype, "Keyword");} | DOUBLE {insertST(curtype, "Keyword");} 
+			: INT | CHAR | FLOAT  | DOUBLE  
 			| LONG long_grammar 
 			| SHORT short_grammar
 			| UNSIGNED unsigned_grammar 
 			| SIGNED signed_grammar
-			| VOID {insertST(curtype, "Keyword");} ;
+			| VOID  ;
 
 unsigned_grammar 
-			: INT {insertST(curtype, "Keyword");}| LONG long_grammar | SHORT short_grammar | ;
+			: INT | LONG long_grammar | SHORT short_grammar | ;
 
 signed_grammar 
-			: INT {insertST(curtype, "Keyword");}| LONG long_grammar | SHORT short_grammar | ;
+			: INT | LONG long_grammar | SHORT short_grammar | ;
 
 long_grammar 
-			: INT {insertST(curtype, "Keyword");} | ;
+			: INT  | ;
 
 short_grammar 
-			: INT {insertST(curtype, "Keyword");}| ;
+			: INT | ;
 
 structure_definition
-			: STRUCT {insertST(curtype, "Keyword");} identifier { ins(); } '{' V1  '}' ';';
+			: STRUCT  identifier { ins(); } '{' V1  '}' ';';
 
 V1 : variable_declaration V1 | ;
 
@@ -176,7 +176,7 @@ statement
 			| variable_declaration;
 
 compound_statement 
-			: '{' statment_list {currnest++;} '}' {deletedata(currnest);} ;
+			: {currnest++;} '{'  statment_list  '}' {currnest--;}  ;
 
 statment_list 
 			: statement statment_list 
