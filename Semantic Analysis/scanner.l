@@ -54,14 +54,7 @@
 		}
 		else if(strcmp(ST[value].name,str)==0)
 		{	
-			if(duplicate(value))
-			{
-				printf("Duplicate %s\n",str);
-				exit(0);
-			}
-			if(strcmp(ST[value].class,"Identifier")==0)
-				return 0;
-			return 1;
+			return value;
 		}
 		else
 		{
@@ -69,14 +62,7 @@
 			{
 				if(strcmp(ST[i].name,str)==0)
 				{
-					if(duplicate(i))
-					{
-						printf("Duplicate %s\n",str);
-						exit(0);
-					}
-					if(strcmp(ST[i].class,"Identifier")==0)
-					return 0;
-			        return 1;
+					return i;
 				}
 			}
 			return 0;
@@ -107,6 +93,11 @@
 	{
 		if(lookupST(str1))
 		{
+			if(strcmp(ST[lookupST(str1)].class,"Identifier")==0 && strcmp(str2,"Array Identifier")==0)
+			{
+				printf("Error use of array\n");
+				exit(0);
+			}	
 			return;
 		}
 		else
@@ -117,6 +108,7 @@
 				strcpy(ST[value].name,str1);
 				strcpy(ST[value].class,str2);
 				ST[value].length = strlen(str1);
+				ST[value].nestval = 9999;
 				insertSTline(str1,yylineno);
 				return;
 			}
@@ -135,6 +127,8 @@
 			strcpy(ST[pos].name,str1);
 			strcpy(ST[pos].class,str2);
 			ST[pos].length = strlen(str1);
+			ST[pos].nestval = 9999;
+
 		}
 	}
 
@@ -175,7 +169,7 @@
 	{
 		for(int i = 0 ; i < 1001 ; i++)
 		{
-			if(strcmp(ST[i].name,s)==0 && !ST[i].nestval)
+			if(strcmp(ST[i].name,s)==0 )
 			{
 				ST[i].nestval = nest;
 			}
@@ -236,33 +230,46 @@
 
 	int checkscope(char *s)
 	{
-		int flag=0;
-		for(int i=0;i<1001;i++)
+		for(int i = 0 ; i < 1000 ; i++)
 		{
-			if(strcmp(ST[i].name, s) == 0)
+			if(strcmp(ST[i].name,s)==0)
 			{
-				if(ST[i].nestval <= currnest)
+				if(ST[i].nestval > currnest)
+				return 0;
+			}
+		}
+		return 1;
+		
+	}
+
+	int checkarray(char *s)
+	{
+		for(int i = 0 ; i < 1000 ; i++)
+		{
+			if(strcmp(ST[i].name,s)==0)
+			{
+				if(strcmp(ST[i].class,"Array Identifier")==0)
 				{
-					flag = 1;
-					break;
+					return 0;
 				}
 			}
 		}
-
-		if(flag == 0)
-		{
-			printf("Undeclared variable %s\n", s);
-		}
-		return flag;
+		return 1;
 	}
 
-	int duplicate(int index)
+	int duplicate(char *s)
 	{
-		if(ST[index].nestval == currnest && strcmp(ST[index].class, "Identifier") == 0)
+		for(int i = 0 ; i < 1000 ; i++)
 		{
-			printf("%s\n",ST[index].name);
-			return 1;
+			if(strcmp(ST[i].name,s)==0)
+			{				
+				if(ST[i].nestval == currnest)
+				{
+			        return 1;
+				}
+			}
 		}
+		
 		return 0;
 	}
 
@@ -380,6 +387,7 @@ IN "include"
 "break"			{ insertST(yytext, "Keyword");  return BREAK;}
 
 
+
 "++"			{ return increment_operator; }
 "--"			{ return decrement_operator; }
 "<<"			{ return leftshift_operator; }
@@ -416,10 +424,10 @@ IN "include"
 
 \"[^\n]*\"/[;|,|\)] 			{strcpy(curval,yytext); insertCT(yytext,"String Constant"); return string_constant;}
 \'[A-Z|a-z]\'/[;|,|\)|:] 		{strcpy(curval,yytext); insertCT(yytext,"Character Constant"); return character_constant;}
-[a-z|A-Z]([a-z|A-Z]|[0-9])*/\[ 	{strcpy(curid,yytext); insertST(yytext, "Array Identifier");insertSTnest(yytext,currnest);  return identifier;}
+[a-z|A-Z]([a-z|A-Z]|[0-9])*/\[ 	{strcpy(curid,yytext); insertST(yytext, "Array Identifier");  return array_identifier;}
 [1-9][0-9]*|0/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\]|\}|:|\n|\t|\^] 	{strcpy(curval,yytext); insertCT(yytext, "Number Constant"); yylval = atoi(yytext); return integer_constant;}
 ([0-9]*)\.([0-9]+)/[;|,|" "|\)|<|>|=|\!|\||&|\+|\-|\*|\/|\%|~|\n|\t|\^] 	{strcpy(curval,yytext); insertCT(yytext, "Floating Constant"); return float_constant;}
-[A-Za-z_][A-Za-z_0-9]* {strcpy(curid,yytext);  return identifier;}
+[A-Za-z_][A-Za-z_0-9]* {strcpy(curid,yytext); insertST(curid,"Identifier"); return identifier;}
 
 (.?) {
 		if(yytext[0]=='#')
