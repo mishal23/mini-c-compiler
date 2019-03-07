@@ -28,6 +28,7 @@
 	int check_params(char*);
 	int duplicate(char *s);
 	int checkarray(char*);
+	char currfunctype[100];
 
 %}
 
@@ -148,7 +149,7 @@ function_declaration
 			: function_declaration_type function_declaration_param_statement;
 
 function_declaration_type
-			: type_specifier identifier '('  { check_duplicate(curid, "Function"); insertST(curid, "Function"); ins();};
+			: type_specifier identifier '('  { strcpy(currfunctype, curtype); check_duplicate(curid, "Function"); insertST(curid, "Function"); ins(); };
 
 function_declaration_param_statement
 			: params ')' statement;
@@ -201,13 +202,12 @@ iterative_statements
 			: WHILE '(' simple_expression ')' statement 
 			| FOR '(' expression ';' simple_expression ';' expression ')' 
 			| DO statement WHILE '(' simple_expression ')' ';';
-
 return_statement 
-			: RETURN return_statement_breakup;
+			: RETURN return_expression_breakup;
 
-return_statement_breakup
-			: ';' 
-			| expression ';' ;
+return_expression_breakup
+			: ';'
+			| expression ';' { if(!strcmp(currfunctype, "void")) printf("Function is void\n"); exit(9); };
 
 break_statement 
 			: BREAK ';' ;
