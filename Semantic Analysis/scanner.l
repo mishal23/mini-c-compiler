@@ -60,7 +60,7 @@
 				exit(0);
 			}
 			if(strcmp(ST[value].class,"Identifier")==0)
-			return 0;
+				return 0;
 			return 1;
 		}
 		else
@@ -258,10 +258,44 @@
 
 	int duplicate(int index)
 	{
-		if(ST[index].nestval == currnest && strcmp(ST[index].class,"Identifier") == 0)
+		if(ST[index].nestval == currnest && strcmp(ST[index].class, "Identifier") == 0)
 		{
 			printf("%s\n",ST[index].name);
 			return 1;
+		}
+		return 0;
+	}
+
+	int check_duplicate(char* str, char *check_type)
+	{
+		for(int i=0; i<1001; i++)
+		{
+			if(strcmp(ST[i].name, str) == 0 && strcmp(ST[i].class, "Function") == 0)
+			{
+				printf("Function redeclaration not allowed\n");
+				exit(0);
+			}
+		}
+	}
+
+	int check_declaration(char* str, char *check_type)
+	{
+		for(int i=0; i<1001; i++)
+		{
+			if(strcmp(ST[i].name, str) == 0 && strcmp(ST[i].class, check_type) == "Function" || strcmp(ST[i].name, "printf"))
+			{
+				return 1;
+			}
+		}
+		return 0;
+	}
+
+	int check_params(char* type_specifier)
+	{
+		if(!strcmp(type_specifier, "void"))
+		{
+			printf("Parameters cannot be of type void\n");
+			exit(0);
 		}
 		return 0;
 	}
