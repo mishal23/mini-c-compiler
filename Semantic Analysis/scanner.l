@@ -289,7 +289,7 @@
 	{
 		for(int i=0; i<1001; i++)
 		{
-			if(strcmp(ST[i].name, str) == 0 && strcmp(ST[i].class, check_type) == "Function" || strcmp(ST[i].name, "printf"))
+			if(strcmp(ST[i].name, str) == 0 && strcmp(ST[i].class, "Function") == 0 || strcmp(ST[i].name, "printf"))
 			{
 				return 1;
 			}
