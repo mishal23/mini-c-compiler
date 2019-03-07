@@ -7,7 +7,6 @@ int main(){
     char ch;//Character Datatype
     int x;
     int a[10];
-    x[10];
 
     for (i=0;i<n;i++){
         if(i<10){
