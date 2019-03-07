@@ -21,11 +21,13 @@
 	extern int currnest;
 	void deletedata (int );
 	int checkscope(char*);
-	void insertST(char*,char*);
-	void insertSTnest(char*,int);
+	void insertST(char*, char*);
+	void insertSTnest(char*, int);
+	int check_duplicate(char*, char *);
+	int check_declaration(char*, char *);
+	int check_params(char*);
 	int duplicate(char *s);
 	int checkarray(char*);
-
 
 %}
 
@@ -142,12 +144,11 @@ V1 : variable_declaration V1 | ;
 structure_declaration 
 			: STRUCT identifier variable_declaration_list;
 
-
 function_declaration
 			: function_declaration_type function_declaration_param_statement;
 
 function_declaration_type
-			: type_specifier identifier '('  { ins();};
+			: type_specifier identifier '('  { check_duplicate(curid, "Function"); insertST(curid, "Function"); ins();};
 
 function_declaration_param_statement
 			: params ')' statement;
@@ -156,7 +157,7 @@ params
 			: parameters_list | ;
 
 parameters_list 
-			: type_specifier parameters_identifier_list;
+			: type_specifier { check_params(curtype); } parameters_identifier_list;
 
 parameters_identifier_list 
 			: param_identifier parameters_identifier_list_breakup;
@@ -298,7 +299,7 @@ immutable
 			| call | constant;
 
 call
-			: identifier '(' arguments ')';
+			: identifier '(' arguments ')' { if(!check_declaration(curid, "Function")){ printf("Function not declared"); exit(0);}; insertST(curid, "Function"); };
 
 arguments 
 			: arguments_list | ;
