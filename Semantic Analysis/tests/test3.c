@@ -1,7 +1,7 @@
-#include<stdio.h>
+
 
 int main(){
-    char s[10]="Welcome!!";
+    //char s[10]="Welcome!!";
     char s[]="Welcome!!";
     int a[2] = {1, 2};
     char S[20];

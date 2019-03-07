@@ -23,6 +23,8 @@
 	int checkscope(char*);
 	void insertST(char*,char*);
 	void insertSTnest(char*,int);
+	int duplicate(char *s);
+	int checkarray(char*);
 
 
 %}
@@ -36,7 +38,7 @@
 %token ENDIF
 %expect 2
 
-%token identifier
+%token identifier array_identifier
 %token integer_constant string_constant float_constant character_constant
 
 %nonassoc ELSE
@@ -94,7 +96,8 @@ V
 			| ;
 
 variable_declaration_identifier 
-			: identifier {insertST(curid,"Identifier");insertSTnest(curid,currnest); ins();  } vdi;
+			: identifier {if(duplicate(curid)){printf("Duplicate\n");exit(0);}insertSTnest(curid,currnest); ins();  } vdi
+			  | array_identifier {if(duplicate(curid)){printf("Duplicate\n");exit(0);}insertSTnest(curid,currnest); ins();  } vdi;
 
 vdi : identifier_array_type | assignment_operator expression ; 
 
@@ -282,12 +285,13 @@ factor
 			: immutable | mutable ;
 
 mutable 
-			: identifier 
-			| mutable mutable_breakup;
-
-mutable_breakup
-			: '[' expression ']' 
-			| '.' identifier;
+			: identifier {
+			              if(!checkscope(curid))
+			              {printf("%s\n",curid);printf("Undeclared\n");exit(0);} 
+			              if(!checkarray(curid))
+			              {printf("%s\n",curid);printf("Array ID has no subscript\n");exit(0);}
+			              }
+			| array_identifier {if(!checkscope(curid)){printf("%s\n",curid);printf("Undeclared\n");exit(0);}} '[' expression ']';
 
 immutable 
 			: '(' expression ')' 
