@@ -53,7 +53,8 @@
 			return 0;
 		}
 		else if(strcmp(ST[value].name,str)==0)
-		{	
+		{
+			
 			return value;
 		}
 		else
@@ -62,6 +63,7 @@
 			{
 				if(strcmp(ST[i].name,str)==0)
 				{
+					
 					return i;
 				}
 			}
@@ -177,6 +179,19 @@
 
 	}
 
+	void insertSTF(char *s)
+	{
+		for(int i = 0 ; i < 1001 ; i++)
+		{
+			if(strcmp(ST[i].name,s)==0 )
+			{
+				strcpy(ST[i].class,"Function");
+				return;
+			}
+		}
+
+	}
+
 	void insertCT(char *str1, char *str2)
 	{
 		if(lookupCT(str1))
@@ -273,7 +288,7 @@
 		return 0;
 	}
 
-	int check_duplicate(char* str, char *check_type)
+	int check_duplicate(char* str)
 	{
 		for(int i=0; i<1001; i++)
 		{
@@ -289,7 +304,7 @@
 	{
 		for(int i=0; i<1001; i++)
 		{
-			if(strcmp(ST[i].name, str) == 0 && strcmp(ST[i].class, "Function") == 0 || strcmp(ST[i].name, "printf"))
+			if(strcmp(ST[i].name, str) == 0 && strcmp(ST[i].class, "Function") == 0 || strcmp(ST[i].name,"printf")==0 )
 			{
 				return 1;
 			}

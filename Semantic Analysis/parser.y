@@ -23,12 +23,13 @@
 	int checkscope(char*);
 	void insertST(char*, char*);
 	void insertSTnest(char*, int);
-	int check_duplicate(char*, char *);
+	int check_duplicate(char*);
 	int check_declaration(char*, char *);
 	int check_params(char*);
 	int duplicate(char *s);
 	int checkarray(char*);
 	char currfunctype[100];
+	void insertSTF(char*);
 
 %}
 
@@ -41,7 +42,7 @@
 %token ENDIF
 %expect 2
 
-%token identifier array_identifier
+%token identifier array_identifier func_identifier
 %token integer_constant string_constant float_constant character_constant
 
 %nonassoc ELSE
@@ -149,7 +150,7 @@ function_declaration
 			: function_declaration_type function_declaration_param_statement;
 
 function_declaration_type
-			: type_specifier identifier '('  { strcpy(currfunctype, curtype); check_duplicate(curid, "Function"); insertST(curid, "Function"); ins(); };
+			: type_specifier identifier '('  { strcpy(currfunctype, curtype); check_duplicate(curid); insertSTF(curid); ins(); };
 
 function_declaration_param_statement
 			: params ')' statement;

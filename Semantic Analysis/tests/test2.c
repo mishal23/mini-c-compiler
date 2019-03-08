@@ -13,7 +13,7 @@ void main(){
 	h=a||b;
 	h=a*(a+b);
 	h=a*a+b*b;
-	h=fun(b);
+	
 
 	//This Test case contains operator,structure,delimeters,Function;
 }
