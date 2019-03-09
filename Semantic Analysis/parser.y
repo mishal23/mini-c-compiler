@@ -343,7 +343,11 @@ immutable
 			| constant {if($1==1) $$=1; else $$=-1;};
 
 call
-			: identifier '(' arguments ')' { if(!check_declaration(curid, "Function")){ printf("Function not declared"); exit(0);}; insertSTF(curid); };
+			: identifier '('{
+			             if(!check_declaration(curid, "Function"))
+			             { printf("Function not declared"); exit(0);} 
+			             insertSTF(curid); 
+			             } arguments ')';
 
 arguments 
 			: arguments_list | ;
