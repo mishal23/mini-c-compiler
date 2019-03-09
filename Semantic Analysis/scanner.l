@@ -254,7 +254,19 @@
 			}
 		}
 		return 1;
-		
+	}
+
+	int check_id_is_func(char *s)
+	{
+		for(int i = 0 ; i < 1000 ; i++)
+		{
+			if(strcmp(ST[i].name,s)==0)
+			{
+				if(strcmp(ST[i].class,"Function")==0)
+					return 1;
+			}
+		}
+		return 0;
 	}
 
 	int checkarray(char *s)

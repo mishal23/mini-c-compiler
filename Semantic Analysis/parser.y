@@ -21,6 +21,7 @@
 	extern int currnest;
 	void deletedata (int );
 	int checkscope(char*);
+	int check_id_is_func(char *);
 	void insertST(char*, char*);
 	void insertSTnest(char*, int);
 	int check_duplicate(char*);
@@ -318,6 +319,8 @@ factor
 
 mutable 
 			: identifier {
+						  if(check_id_is_func(curid))
+						  {printf("Function name used as Identifier\n"); exit(8);}
 			              if(!checkscope(curid))
 			              {printf("%s\n",curid);printf("Undeclared\n");exit(0);} 
 			              if(!checkarray(curid))
