@@ -322,6 +322,34 @@
 		return 0;
 	}
 
+	char gettype(char *s, int flag)
+	{
+			for(int i = 0 ; i < 1001 ; i++ )
+			{
+				if(strcmp(ST[i].name,s)==0)
+				{
+					return ST[i].type[0];
+				}
+			}
+		
+	}
+
+	char getfirst(char *s)
+	{
+		if(strcmp(s,"int")==0)
+		{
+			return 'i';
+		}
+		else if(strcmp(s,"char")==0)
+		{
+			return 'c';
+		}
+		else if(strcmp(s,"void")==0)
+		{
+			return 'v';
+		}
+	}
+
 	void printST()
 	{
 		printf("%10s | %15s | %10s | %10s | %10s | %15s\n","SYMBOL", "CLASS", "TYPE","VALUE", "LINE NO", "NESTING");
