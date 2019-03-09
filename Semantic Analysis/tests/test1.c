@@ -1,8 +1,8 @@
 #include<stdio.h>
 
-float myfunc()
+int myfunc()
 {
-    float b;
+    int b;
     return b;
 }
 
@@ -20,7 +20,7 @@ void main()
     //int x;
     //j;
     //int b[0];
-    //myfunc(x);
+    myfunc(x);
     /*if("str")
     {
 
