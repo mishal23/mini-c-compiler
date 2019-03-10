@@ -20,6 +20,7 @@
 		int nestval;
 		int lineno;
 		int length;
+		int params_count;
 	}ST[1001];
 
 	struct constanttable
@@ -30,6 +31,7 @@
 	}CT[1001];
 
 	int currnest = 0;
+	int params_count = 0;
 	extern int yylval;
 
 	int hash(char *str)
@@ -111,6 +113,7 @@
 				strcpy(ST[value].class,str2);
 				ST[value].length = strlen(str1);
 				ST[value].nestval = 9999;
+				ST[value].params_count = -1;
 				insertSTline(str1,yylineno);
 				return;
 			}
@@ -130,7 +133,7 @@
 			strcpy(ST[pos].class,str2);
 			ST[pos].length = strlen(str1);
 			ST[pos].nestval = 9999;
-
+			ST[pos].params_count = -1;
 		}
 	}
 
@@ -176,7 +179,29 @@
 				ST[i].nestval = nest;
 			}
 		}
+	}
 
+	void insertSTparamscount(char *s, int count)
+	{
+		for(int i = 0 ; i < 1001 ; i++)
+		{
+			if(strcmp(ST[i].name,s)==0 )
+			{
+				ST[i].params_count = count;
+			}
+		}
+	}
+
+	int getSTparamscount(char *s)
+	{
+		for(int i = 0 ; i < 1001 ; i++)
+		{
+			if(strcmp(ST[i].name,s)==0 )
+			{
+				return ST[i].params_count;
+			}
+		}
+		return -2;
 	}
 
 	void insertSTF(char *s)
@@ -237,6 +262,7 @@
 				ST[i].length = 0;
 				ST[i].lineno = 0;
 				ST[i].nestval = -1;
+				ST[i].params_count = -1;
 			}
 		}
 
@@ -364,8 +390,8 @@
 
 	void printST()
 	{
-		printf("%10s | %15s | %10s | %10s | %10s | %15s\n","SYMBOL", "CLASS", "TYPE","VALUE", "LINE NO", "NESTING");
-		for(int i=0;i<90;i++) {
+		printf("%10s | %15s | %10s | %10s | %10s | %15s | %10s |\n","SYMBOL", "CLASS", "TYPE","VALUE", "LINE NO", "NESTING", "PARAMS COUNT");
+		for(int i=0;i<100;i++) {
 			printf("-");
 		}
 		printf("\n");
@@ -375,7 +401,7 @@
 			{
 				continue;
 			}
-			printf("%10s | %15s | %10s | %10s | %10d | %15d\n",ST[i].name, ST[i].class, ST[i].type, ST[i].value, ST[i].lineno, ST[i].nestval);
+			printf("%10s | %15s | %10s | %10s | %10d | %15d | %10d |\n",ST[i].name, ST[i].class, ST[i].type, ST[i].value, ST[i].lineno, ST[i].nestval, ST[i].params_count);
 		}
     }
 
