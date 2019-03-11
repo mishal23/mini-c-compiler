@@ -1,12 +1,13 @@
 #include <stdio.h>
 
-int func(int a, int b)
+void func(int a, int b)
 {
-
+	return 5;
 }
 
 int main()
 {
-	func();
+	int z = 5;
+	func(5,z,z);
 	printf("wow\n");
 }

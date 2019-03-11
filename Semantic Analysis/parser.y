@@ -24,16 +24,21 @@
 	int check_id_is_func(char *);
 	void insertST(char*, char*);
 	void insertSTnest(char*, int);
+	void insertSTparamscount(char*, int);
+	int getSTparamscount(char*);
 	int check_duplicate(char*);
 	int check_declaration(char*, char *);
 	int check_params(char*);
 	int duplicate(char *s);
 	int checkarray(char*);
 	char currfunctype[100];
+	char currfunc[100];
+	char currfunccall[100];
 	void insertSTF(char*);
 	char gettype(char*,int);
 	char getfirst(char*);
-
+	extern int params_count;
+	int call_params_count;
 %}
 
 %nonassoc IF
@@ -153,7 +158,7 @@ function_declaration
 			: function_declaration_type function_declaration_param_statement;
 
 function_declaration_type
-			: type_specifier identifier '('  { strcpy(currfunctype, curtype); check_duplicate(curid); insertSTF(curid); ins(); };
+			: type_specifier identifier '('  { strcpy(currfunctype, curtype); strcpy(currfunc, curid); check_duplicate(curid); insertSTF(curid); ins(); };
 
 function_declaration_param_statement
 			: params ')' statement;
@@ -162,7 +167,7 @@ params
 			: parameters_list | ;
 
 parameters_list 
-			: type_specifier { check_params(curtype); } parameters_identifier_list;
+			: type_specifier { check_params(curtype); } parameters_identifier_list { insertSTparamscount(currfunc, params_count); };
 
 parameters_identifier_list 
 			: param_identifier parameters_identifier_list_breakup;
@@ -172,7 +177,7 @@ parameters_identifier_list_breakup
 			| ;
 
 param_identifier 
-			: identifier { ins(); } param_identifier_breakup;
+			: identifier { ins(); params_count++; } param_identifier_breakup;
 
 param_identifier_breakup
 			: '[' ']'
@@ -207,17 +212,18 @@ iterative_statements
 			| FOR '(' expression ';' simple_expression ';' {if($5!=1){printf("Condition checking is not of type int\n");exit(0);}} expression ')' 
 			| DO statement WHILE '(' simple_expression ')'{if($5!=1){printf("Condition checking is not of type int\n");exit(0);}} ';';
 return_statement 
-			: RETURN ';' {if(strcmp(currfunctype,"void")){printf("Returning void of a non-void function\n");exit(0);}}
-			| RETURN expression ';' { if(!strcmp(currfunctype, "void"))
-			                    { 
-			                    printf("Function is void\n"); exit(9);
-			                    }
-			                    if((currfunctype[0]=='i' || currfunctype[0]=='c') && $2!=1)
-			                    {
-			                    	printf("Exp return not of func type\n"); exit(0);
-			                    }
+			: RETURN ';' {if(strcmp(currfunctype,"void")) {printf("Returning void of a non-void function\n"); exit(0);}}
+			| RETURN expression ';' { 	if(!strcmp(currfunctype, "void"))
+										{ 
+											yyerror("Function is void");
+										}
+
+										if((currfunctype[0]=='i' || currfunctype[0]=='c') && $2!=1)
+										{
+											printf("Expression doesn't match return type of function\n"); exit(0);
+										}
 			              
-			                     };
+			                     	};
 
 break_statement 
 			: BREAK ';' ;
@@ -347,16 +353,27 @@ call
 			             if(!check_declaration(curid, "Function"))
 			             { printf("Function not declared"); exit(0);} 
 			             insertSTF(curid); 
-			             } arguments ')';
+						 strcpy(currfunccall,curid);
+			             } arguments ')' 
+						 { if(strcmp(currfunccall,"printf"))
+							{ 
+								if(getSTparamscount(currfunccall)!=call_params_count)
+								{	
+									yyerror("Number of arguments in function call doesn't match number of parameters");
+									//printf("Number of arguments in function call %s doesn't match number of parameters\n", currfunccall);
+									exit(8);
+								}
+							} 
+						 };
 
 arguments 
 			: arguments_list | ;
 
 arguments_list 
-			: expression A;
+			: expression { call_params_count++; } A ;
 
 A
-			: ',' expression A 
+			: ',' expression { call_params_count++; } A 
 			| ;
 
 constant 
@@ -396,9 +413,10 @@ int main(int argc , char **argv)
 
 void yyerror(char *s)
 {
-	printf("%d %s %s\n", yylineno, s, yytext);
+	printf(ANSI_COLOR_RED "%d %s %s\n", yylineno, s, yytext);
 	flag=1;
 	printf(ANSI_COLOR_RED "Status: Parsing Failed - Invalid\n" ANSI_COLOR_RESET);
+	exit(7);
 }
 
 void ins()

@@ -1,16 +1,17 @@
 #include<stdio.h>
-char square(int a)
+int square(int a, int b)
 {
-    int b;
+    int b=5;
 	return b;
 }
 
 int main()
 {
 	int num = 2;
-	int square;
+	int num2;
+	num2 = square(num,num);
 	
-	printf("Square of %d is %d", num, square);
+	//printf("Square of %d is %d", num, square2(5));
 
 	return 0;
 }
