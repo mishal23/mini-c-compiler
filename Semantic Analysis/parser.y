@@ -177,7 +177,7 @@ parameters_identifier_list_breakup
 			| ;
 
 param_identifier 
-			: identifier { ins(); params_count++; } param_identifier_breakup;
+			: identifier { ins();insertSTnest(curid,1); params_count++; } param_identifier_breakup;
 
 param_identifier_breakup
 			: '[' ']'
@@ -190,7 +190,7 @@ statement
 			| variable_declaration;
 
 compound_statement 
-			: {currnest++;} '{'  statment_list  '}' {currnest--;}  ;
+			: {currnest++;} '{'  statment_list  '}' {deletedata(currnest);currnest--;}  ;
 
 statment_list 
 			: statement statment_list 

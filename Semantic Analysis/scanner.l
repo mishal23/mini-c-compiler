@@ -172,12 +172,34 @@
 
 	void insertSTnest(char *s, int nest)
 	{
+		if(lookupST(s) && ST[lookupST(s)].nestval != 9999)
+		{
+             int pos = 0;
+             int value = hash(s);
+			for (int i = value + 1 ; i!=value ; i = (i+1)%1001)
+			{
+				if(ST[i].length == 0)
+				{
+					pos = i;
+					break;
+				}
+			}
+
+			strcpy(ST[pos].name,s);
+			strcpy(ST[pos].class,"Identifier");
+			ST[pos].length = strlen(s);
+			ST[pos].nestval = nest;
+			ST[pos].params_count = -1;
+		}
+		else
+		{
 		for(int i = 0 ; i < 1001 ; i++)
 		{
 			if(strcmp(ST[i].name,s)==0 )
 			{
 				ST[i].nestval = nest;
 			}
+		}
 		}
 	}
 
@@ -255,14 +277,7 @@
 		{
 			if(ST[i].nestval == nesting)
 			{
-				strcpy(ST[i].name, "");
-				strcpy(ST[i].type, "");
-				strcpy(ST[i].class, "");
-				strcpy(ST[i].value, "");
-				ST[i].length = 0;
-				ST[i].lineno = 0;
-				ST[i].nestval = -1;
-				ST[i].params_count = -1;
+				ST[i].nestval = 99999;
 			}
 		}
 
@@ -271,15 +286,30 @@
 
 	int checkscope(char *s)
 	{
+		int flag = 0;
 		for(int i = 0 ; i < 1000 ; i++)
 		{
 			if(strcmp(ST[i].name,s)==0)
 			{
 				if(ST[i].nestval > currnest)
-				return 0;
+				{
+					flag = 1;
+				}
+				else
+				{
+					flag = 0;
+					break;
+				}
 			}
 		}
-		return 1;
+		if(!flag)
+		{
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
 	}
 
 	int check_id_is_func(char *s)
