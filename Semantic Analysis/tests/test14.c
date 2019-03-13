@@ -1,8 +1,15 @@
-// Implicit Error that our Language doesn't support
 
 #include<stdio.h>
 
-int main() {
-    char @hello;
-    @hello = 'c';
+void myfunc(int a)
+{
+    return a;
+}
+
+void main()
+{
+    int i,n;
+
+    myfunc(i);
+    
 }

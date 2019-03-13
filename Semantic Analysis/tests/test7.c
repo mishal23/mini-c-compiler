@@ -1,21 +1,23 @@
+//for loop
+//continue
+//while loop
+//do while loop
+
 #include<stdio.h>
-
-
-
-struct abc
-{
-   int a;
-   char b;
-};
 
 int main()
 {
-	struct abc A;
-	A.a = 2;
-	int num = 2;
-	int num2 = square(num);
-	
-	printf("Square of %d is %d", num, num2);
+    int a=0;
+    for (a = 0; a < 10; a++)
+        {
+        	printf("H1");
+        }
+    
+    while(a>0) {
+        a--;
+    }
 
-	return 0;
+    do {
+        a++;
+    }while(a<10);
 }

@@ -1,5 +1,14 @@
-#include <stdio.h>
-int main()
+#include<stdio.h>
+
+int myfunc(int a)
 {
-	int 9abi = 10;
+    return a;
+}
+
+void main()
+{
+    int i,n;
+
+    myfunc(i,n);
+    
 }

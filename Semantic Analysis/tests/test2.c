@@ -3,7 +3,7 @@
 
 
 void main(){
-	int a=2,b,c,d,e,f,g,h;
+	int a,b,c,d,e,f,g,h;
 
 	c=a+b;
 	d=a*b;
@@ -15,5 +15,4 @@ void main(){
 	h=a*a+b*b;
 	
 
-	//This Test case contains operator,structure,delimeters,Function;
 }

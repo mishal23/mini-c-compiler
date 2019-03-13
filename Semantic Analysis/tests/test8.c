@@ -1,13 +1,22 @@
-#include<stdio.h>
-#define NUM 5
+// Mixture of tests, comments
 
+#include<stdio.h>
 int main()
 {
-char A[] = "#define MAX 10";
-char B[ ] = "Hello";
-char ch  = 'B';
-unsigned a = 1;
-printf("String = %s Value of Pi = %f", 3.14);
-
- 	return 0;
+	int a, b;
+	char c;
+	for(a = 0; a < 29; a++)
+	{
+		if(a < 15) {
+			printf("Hello World");
+		}
+	}
+	int x = a + b;
+	// Single Line Comment
+	/* This is a 
+	   multi-line comment */ 
+	   
+	int var1;
+	char var2;
+	printf("%d",x);
 }

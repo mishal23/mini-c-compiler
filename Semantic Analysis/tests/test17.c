@@ -1,13 +1,6 @@
-#include <stdio.h>
+#include<stdio.h>
 
-void func(int a, int b)
+void main()
 {
-	return 5;
-}
-
-int main()
-{
-	int z = 5;
-	func(5,z,z);
-	printf("wow\n");
+    int a[0];
 }

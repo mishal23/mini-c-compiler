@@ -1,25 +1,13 @@
 #include<stdio.h>
+#define NUM 5
 
 int main()
 {
-	int a = 5;
-	while(a>0)
-	{
-		printf("Hello world");
-		a--;
-	}
+char A[] = "#define MAX 10";
+char B[ ] = "Hello";
+char ch  = 'B';
+unsigned int a = 1;
+printf("String = %s Value of Pi = %f", 3.14);
 
-	a=4;
-	while(a>0)
-	{
-		printf("%d",a);
-		a--;
-		int b;
-		b= 4;
-		while(b>0)
-		{
-			printf("%d", a*b);
-			b--;
-		}
-	}
+ 	return 0;
 }

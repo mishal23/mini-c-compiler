@@ -164,7 +164,7 @@
 	{
 		for(int i = 0 ; i < 1001 ; i++)
 		{
-			if(strcmp(ST[i].name,str1)==0)
+			if(strcmp(ST[i].name,str1)==0 && ST[i].nestval == currnest)
 			{
 				strcpy(ST[i].value,str2);
 			}

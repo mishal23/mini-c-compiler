@@ -8,16 +8,13 @@
 	void ins();
 	void insV();
 	int flag=0;
-
 	#define ANSI_COLOR_RED		"\x1b[31m"
 	#define ANSI_COLOR_GREEN	"\x1b[32m"
 	#define ANSI_COLOR_CYAN		"\x1b[36m"
 	#define ANSI_COLOR_RESET	"\x1b[0m"
-
 	extern char curid[20];
 	extern char curtype[20];
 	extern char curval[20];
-
 	extern int currnest;
 	void deletedata (int );
 	int checkscope(char*);
@@ -99,11 +96,7 @@ variable_declaration
 			: type_specifier variable_declaration_list ';' 
 
 variable_declaration_list
-			: variable_declaration_identifier V;
-
-V
-			: ',' variable_declaration_list 
-			| ;
+			: variable_declaration_list ',' variable_declaration_identifier | variable_declaration_identifier;
 
 variable_declaration_identifier 
 			: identifier {if(duplicate(curid)){printf("Duplicate\n");exit(0);}insertSTnest(curid,currnest); ins();  } vdi   
@@ -111,7 +104,7 @@ variable_declaration_identifier
 			
 			
 
-vdi : identifier_array_type | assignment_operator expression ; 
+vdi : identifier_array_type | assignment_operator simple_expression  ; 
 
 identifier_array_type
 			: '[' initilization_params
@@ -221,7 +214,7 @@ break_statement
 			: BREAK ';' ;
 
 string_initilization
-			: assignment_operator string_constant { insV(); };
+			: assignment_operator string_constant {insV();} ;
 
 array_initialization
 			: assignment_operator '{' array_int_declarations '}';
@@ -236,7 +229,9 @@ array_int_declarations_breakup
 expression 
 			: mutable assignment_operator expression              {
 																	  if($1==1 && $3==1) 
-			                                                          $$=1; 
+																	  {
+			                                                          $$=1;
+			                                                          } 
 			                                                          else 
 			                                                          {$$=-1; printf("Type mismatch\n"); exit(0);} 
 			                                                       }
@@ -369,10 +364,10 @@ A
 			| ;
 
 constant 
-			: integer_constant 	{ insV(); $$=1; } 
-			| string_constant	{ insV(); $$=-1;} 
-			| float_constant	{ insV(); } 
-			| character_constant{ insV(); $$=1;};
+			: integer_constant 	{  insV(); $$=1; } 
+			| string_constant	{  insV(); $$=-1;} 
+			| float_constant	{  insV(); } 
+			| character_constant{  insV();$$=1; };
 
 %%
 
