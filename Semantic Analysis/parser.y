@@ -48,7 +48,7 @@
 %token WHILE FOR DO 
 %token BREAK
 %token ENDIF
-%expect 2
+%expect 1
 
 %token identifier array_identifier func_identifier
 %token integer_constant string_constant float_constant character_constant
@@ -94,11 +94,9 @@ D
 declaration
 			: variable_declaration 
 			| function_declaration
-			| structure_definition;
 
 variable_declaration
 			: type_specifier variable_declaration_list ';' 
-			| structure_declaration;
 
 variable_declaration_list
 			: variable_declaration_identifier V;
@@ -108,8 +106,10 @@ V
 			| ;
 
 variable_declaration_identifier 
-			: identifier {if(duplicate(curid)){printf("Duplicate\n");exit(0);}insertSTnest(curid,currnest); ins();  } vdi
+			: identifier {if(duplicate(curid)){printf("Duplicate\n");exit(0);}insertSTnest(curid,currnest); ins();  } vdi   
 			  | array_identifier {if(duplicate(curid)){printf("Duplicate\n");exit(0);}insertSTnest(curid,currnest); ins();  } vdi;
+			
+			
 
 vdi : identifier_array_type | assignment_operator expression ; 
 
@@ -145,14 +145,6 @@ long_grammar
 
 short_grammar 
 			: INT | ;
-
-structure_definition
-			: STRUCT  identifier { ins(); } '{' V1  '}' ';';
-
-V1 : variable_declaration V1 | ;
-
-structure_declaration 
-			: STRUCT identifier variable_declaration_list;
 
 function_declaration
 			: function_declaration_type function_declaration_param_statement;

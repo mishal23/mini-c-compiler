@@ -93,6 +93,18 @@
 		}
 	}
 
+	void insertSTline(char *str1, int line)
+	{
+		for(int i = 0 ; i < 1001 ; i++)
+		{
+			if(strcmp(ST[i].name,str1)==0)
+			{
+				ST[i].lineno = line;
+			}
+		}
+	}
+
+
 	void insertST(char *str1, char *str2)
 	{
 		if(lookupST(str1))
@@ -159,16 +171,6 @@
 		}
 	}
 
-	void insertSTline(char *str1, int line)
-	{
-		for(int i = 0 ; i < 1001 ; i++)
-		{
-			if(strcmp(ST[i].name,str1)==0)
-			{
-				ST[i].lineno = line;
-			}
-		}
-	}
 
 	void insertSTnest(char *s, int nest)
 	{
@@ -190,16 +192,17 @@
 			ST[pos].length = strlen(s);
 			ST[pos].nestval = nest;
 			ST[pos].params_count = -1;
+			ST[pos].lineno = yylineno;
 		}
 		else
 		{
-		for(int i = 0 ; i < 1001 ; i++)
-		{
-			if(strcmp(ST[i].name,s)==0 )
+			for(int i = 0 ; i < 1001 ; i++)
 			{
-				ST[i].nestval = nest;
+				if(strcmp(ST[i].name,s)==0 )
+				{
+					ST[i].nestval = nest;
+				}
 			}
-		}
 		}
 	}
 
@@ -400,22 +403,6 @@
 				}
 			}
 		
-	}
-
-	char getfirst(char *s)
-	{
-		if(strcmp(s,"int")==0)
-		{
-			return 'i';
-		}
-		else if(strcmp(s,"char")==0)
-		{
-			return 'c';
-		}
-		else if(strcmp(s,"void")==0)
-		{
-			return 'v';
-		}
 	}
 
 	void printST()
