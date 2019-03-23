@@ -42,6 +42,8 @@
 	void swap(char*,char*);
 	void label1();
 	void label2();
+	void label3();
+	void label4();
 	void genunary();
 	void codegencon();
 
@@ -206,8 +208,8 @@ conditional_statements_breakup
 			| ;
 
 iterative_statements 
-			: WHILE {label1();} '(' simple_expression ')' {if($3!=1){printf("Condition checking is not of type int\n");exit(0);}} statement 
-			| FOR '(' expression ';' simple_expression ';' {if($5!=1){printf("Condition checking is not of type int\n");exit(0);}} expression ')' 
+			: WHILE '(' simple_expression ')' {label4();label1();if($3!=1){printf("Condition checking is not of type int\n");exit(0);}} statement {label3();label2();} 
+			| FOR '(' expression ';' {label4();}simple_expression ';' {label1();if($6!=1){printf("Condition checking is not of type int\n");exit(0);}} expression ')'statement {label3();label2();} 
 			| DO statement WHILE '(' simple_expression ')'{if($5!=1){printf("Condition checking is not of type int\n");exit(0);}} ';';
 return_statement 
 			: RETURN ';' {if(strcmp(currfunctype,"void")) {printf("Returning void of a non-void function\n"); exit(0);}}
@@ -556,6 +558,25 @@ void label2()
 	strcat(temp,buffer);
 	printf("%s:\n",temp);
 	lno--;
+}
+
+void label3()
+{
+	strcpy(temp,"L");
+	char buffer[100];
+	itoa(lno-1,buffer,10);
+	strcat(temp,buffer);
+	printf("GoTo %s:\n",temp);
+	
+}
+
+void label4()
+{
+	strcpy(temp,"L");
+	char buffer[100];
+	itoa(lno,buffer,10);
+	strcat(temp,buffer);
+	printf("%s:\n",temp);
 }
 int main(int argc , char **argv)
 {

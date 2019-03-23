@@ -2,10 +2,24 @@
 
 void main()
 {
-	int a,b,c;
+	int a,b,c,d;
 	while(a < 10)
 	{
-		a++;
-		a = b+c;
+		if (a<3)
+		{
+			if(c<d)
+			{
+				a = 98;
+			}
+			else
+			{
+				a = d * b + c;
+			}
+		}
+		else
+		{
+			a++;
+		}
 	}
+	a = b+c;
 }
