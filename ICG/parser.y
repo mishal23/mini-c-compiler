@@ -40,7 +40,7 @@
 	char* itoa(int num, char* str, int base);
 	void reverse(char str[], int length); 
 	void swap(char*,char*);
-
+	void genunary();
 
 	extern int params_count;
 	int call_params_count;
@@ -217,8 +217,8 @@ return_statement
 										{
 											printf("Expression doesn't match return type of function\n"); exit(0);
 										}
-			              
-			                     	};
+
+									};
 
 break_statement 
 			: BREAK ';' ;
@@ -279,8 +279,8 @@ expression
 			                                                          else 
 			                                                          {$$=-1; printf("Type mismatch\n"); exit(0);} 
 			                                                          codeassign();
-			                                                       }
-			| mutable increment_operator 							{push("++");if($1 == 1) $$=1; else $$=-1;}
+																	}
+			| mutable increment_operator 							{ push("++");if($1 == 1) $$=1; else $$=-1; genunary();}
 			| mutable decrement_operator  							{push("--");if($1 == 1) $$=1; else $$=-1;}
 			| simple_expression {if($1 == 1) $$=1; else $$=-1;} ;
 
@@ -473,6 +473,48 @@ void codegen()
 	top = top - 2;
 	strcpy(s[top].value,temp);
 	count++; 
+}
+
+int isunary(char *s)
+{
+	if(strcmp(s, "--")==0 || strcmp(s, "++")==0)
+	{
+		return 1;
+	}
+	return 0;
+}
+
+void genunary()
+{
+	char temp1[100], temp2[100], temp3[100];
+	strcpy(temp1, s[top].value);
+	strcpy(temp2, s[top-1].value);
+
+	if(isunary(temp1))
+	{
+		strcpy(temp3, temp1);
+		strcpy(temp1, temp2);
+		strcpy(temp2, temp3);
+	}
+	strcpy(temp, "t");
+	char buffer[100];
+	itoa(count, buffer, 10);
+	strcat(temp, buffer);
+	count++;
+
+	if(strcmp(temp2,"--")==0)
+	{
+		printf("%s = %s - 1\n", temp, temp1);
+		printf("%s = %s\n", temp1, temp);
+	}
+
+	if(strcmp(temp2,"++")==0)
+	{
+		printf("%s = %s + 1\n", temp, temp1);
+		printf("%s = %s\n", temp1, temp);
+	}
+
+	top = top -2;
 }
 
 void codeassign()
