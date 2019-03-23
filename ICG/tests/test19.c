@@ -3,5 +3,5 @@
 void main()
 {
 	int a;
-	a++;
+	a = 0;
 }
