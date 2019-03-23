@@ -40,11 +40,13 @@
 	char* itoa(int num, char* str, int base);
 	void reverse(char str[], int length); 
 	void swap(char*,char*);
+	void label1();
+	void label2();
 
 
 	extern int params_count;
 	int call_params_count;
-	int top = 0,count=0;
+	int top = 0,count=0,ltop=0,lno=0;
 	char temp[3] = "t";
 %}
 
@@ -196,7 +198,7 @@ expression_statment
 			| ';' ;
 
 conditional_statements 
-			: IF '(' simple_expression ')' {if($3!=1){printf("Condition checking is not of type int\n");exit(0);}} statement conditional_statements_breakup;
+			: IF '(' simple_expression ')' {label1();if($3!=1){printf("Condition checking is not of type int\n");exit(0);}} statement {label2();}  conditional_statements_breakup;
 
 conditional_statements_breakup
 			: ELSE statement
@@ -244,7 +246,7 @@ expression
 			                                                          } 
 			                                                          else 
 			                                                          {$$=-1; printf("Type mismatch\n"); exit(0);} 
-			                                                          codeassign();
+			                                                          //codeassign();
 			                                                       }
 			| mutable addition_assignment_operator {push("+=");}expression {  
 																	  if($1==1 && $4==1) 
@@ -398,7 +400,7 @@ void printCT();
 struct stack
 {
 	char value[100];
-}s[100];
+}s[100],label[100];
 
 
 void push(char *x)
@@ -481,12 +483,31 @@ void codeassign()
 	top = top - 2;
 }
 
+void label1()
+{
+	lno++;
+	strcpy(temp,"L");
+	char buffer[100];
+	itoa(lno,buffer,10);
+	strcat(temp,buffer);
+	printf("IF not %s GoTo %s\n",s[top].value,temp);
+}
+
+void label2()
+{
+	strcpy(temp,"L");
+	char buffer[100];
+	itoa(lno,buffer,10);
+	strcat(temp,buffer);
+	printf("%s:\n",temp);
+	lno--;
+}
 int main(int argc , char **argv)
 {
 	yyin = fopen(argv[1], "r");
 	yyparse();
 
-	if(flag == 0)
+	/*if(flag == 0)
 	{
 		printf(ANSI_COLOR_GREEN "Status: Parsing Complete - Valid" ANSI_COLOR_RESET "\n");
 		printf("%30s" ANSI_COLOR_CYAN "SYMBOL TABLE" ANSI_COLOR_RESET "\n", " ");
@@ -496,7 +517,7 @@ int main(int argc , char **argv)
 		printf("\n\n%30s" ANSI_COLOR_CYAN "CONSTANT TABLE" ANSI_COLOR_RESET "\n", " ");
 		printf("%30s %s\n", " ", "--------------");
 		printCT();
-	}
+	}*/
 }
 
 void yyerror(char *s)
