@@ -2,6 +2,10 @@
 
 void main()
 {
-	int a;
-	a++;
+	int a,b,c;
+	while(a < 10)
+	{
+		a++;
+		a = b+c;
+	}
 }

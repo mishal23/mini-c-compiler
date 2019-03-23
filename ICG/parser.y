@@ -43,6 +43,7 @@
 	void label1();
 	void label2();
 	void genunary();
+	void codegencon();
 
 	extern int params_count;
 	int call_params_count;
@@ -205,7 +206,7 @@ conditional_statements_breakup
 			| ;
 
 iterative_statements 
-			: WHILE '(' simple_expression ')' {if($3!=1){printf("Condition checking is not of type int\n");exit(0);}} statement 
+			: WHILE {label1();} '(' simple_expression ')' {if($3!=1){printf("Condition checking is not of type int\n");exit(0);}} statement 
 			| FOR '(' expression ';' simple_expression ';' {if($5!=1){printf("Condition checking is not of type int\n");exit(0);}} expression ')' 
 			| DO statement WHILE '(' simple_expression ')'{if($5!=1){printf("Condition checking is not of type int\n");exit(0);}} ';';
 return_statement 
@@ -246,7 +247,7 @@ expression
 			                                                          } 
 			                                                          else 
 			                                                          {$$=-1; printf("Type mismatch\n"); exit(0);} 
-			                                                          //codeassign();
+			                                                          codeassign();
 			                                                       }
 			| mutable addition_assignment_operator {push("+=");}expression {  
 																	  if($1==1 && $4==1) 
@@ -381,7 +382,7 @@ A
 			| ;
 
 constant 
-			: integer_constant 	{  insV(); $$=1; } 
+			: integer_constant 	{  insV(); codegencon(); $$=1; } 
 			| string_constant	{  insV(); $$=-1;} 
 			| float_constant	{  insV(); } 
 			| character_constant{  insV();$$=1; };
@@ -475,6 +476,18 @@ void codegen()
 	top = top - 2;
 	strcpy(s[top].value,temp);
 	count++; 
+}
+
+void codegencon()
+{
+	strcpy(temp,"t");
+	char buffer[100];
+	itoa(count,buffer,10);
+	strcat(temp,buffer);
+	printf("%s = %s\n",temp,curval);
+	push(temp);
+	count++;
+	
 }
 
 int isunary(char *s)

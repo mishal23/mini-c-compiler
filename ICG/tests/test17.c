@@ -8,11 +8,11 @@ void main()
 	//a = (b-c)*d + (b-c)*d;
 	//a = b+c*d;
 	//a = b*(-c) + b*(-c);
-	if (a<b)
+	if (a<3)
 	{
 		if(c<d)
 		{
-		a = b+c*d;
+		a = 98;
 		}
 		else
 		{
@@ -21,6 +21,6 @@ void main()
 	}
 	else
 	{
-		a = (b-c)*d + (b-c)*d;
+		a++;
 	}
 }
