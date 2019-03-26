@@ -3,6 +3,7 @@
 int myfunc(int b)
 {
     int x;
+    x = b;
     return x;
 }
 

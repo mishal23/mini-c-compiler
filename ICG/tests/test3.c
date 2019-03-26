@@ -18,7 +18,7 @@ int main()
 		b= 4;
 		while(b>0)
 		{
-			printf("%d", a*b);
+			printf("%d", b);
 			b--;
 		}
 	}

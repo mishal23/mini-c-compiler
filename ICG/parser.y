@@ -44,8 +44,14 @@
 	void label2();
 	void label3();
 	void label4();
+	void label5();
+	void label6();
 	void genunary();
 	void codegencon();
+	void funcgen();
+	void funcgenend();
+	void arggen();
+	void callgen();
 
 	extern int params_count;
 	int call_params_count;
@@ -161,7 +167,7 @@ function_declaration_type
 			: type_specifier identifier '('  { strcpy(currfunctype, curtype); strcpy(currfunc, curid); check_duplicate(curid); insertSTF(curid); ins(); };
 
 function_declaration_param_statement
-			: params ')' statement;
+			: params ')' {funcgen();} statement {funcgenend();};
 
 params 
 			: parameters_list | ;
@@ -204,12 +210,12 @@ conditional_statements
 			: IF '(' simple_expression ')' {label1();if($3!=1){printf("Condition checking is not of type int\n");exit(0);}} statement {label2();}  conditional_statements_breakup;
 
 conditional_statements_breakup
-			: ELSE statement
+			: ELSE statement {label3();}
 			| ;
 
 iterative_statements 
-			: WHILE '(' simple_expression ')' {label4();label1();if($3!=1){printf("Condition checking is not of type int\n");exit(0);}} statement {label3();label2();} 
-			| FOR '(' expression ';' {label4();}simple_expression ';' {label1();if($6!=1){printf("Condition checking is not of type int\n");exit(0);}} expression ')'statement {label3();label2();} 
+			: WHILE '(' {label4();} simple_expression ')' {label1();if($4!=1){printf("Condition checking is not of type int\n");exit(0);}} statement {label5();} 
+			| FOR '(' expression ';' {label4();}simple_expression ';' {label1();if($6!=1){printf("Condition checking is not of type int\n");exit(0);}} expression ')'statement {label5();} 
 			| DO statement WHILE '(' simple_expression ')'{if($5!=1){printf("Condition checking is not of type int\n");exit(0);}} ';';
 return_statement 
 			: RETURN ';' {if(strcmp(currfunctype,"void")) {printf("Returning void of a non-void function\n"); exit(0);}}
@@ -367,27 +373,26 @@ call
 								if(getSTparamscount(currfunccall)!=call_params_count)
 								{	
 									yyerror("Number of arguments in function call doesn't match number of parameters");
-									//printf("Number of arguments in function call %s doesn't match number of parameters\n", currfunccall);
 									exit(8);
 								}
-							} 
+							}
+							callgen();
 						 };
 
 arguments 
 			: arguments_list | ;
 
 arguments_list 
-			: expression { call_params_count++; } A ;
+			: arguments_list ',' exp { call_params_count++; }  
+			| exp { call_params_count++; };
 
-A
-			: ',' expression { call_params_count++; } A 
-			| ;
+exp : identifier {arggen(1);} | integer_constant {arggen(2);} | string_constant {arggen(3);} | float_constant {arggen(4);} | character_constant {arggen(5);} ;
 
 constant 
 			: integer_constant 	{  insV(); codegencon(); $$=1; } 
-			| string_constant	{  insV(); $$=-1;} 
-			| float_constant	{  insV(); } 
-			| character_constant{  insV();$$=1; };
+			| string_constant	{  insV(); codegencon();$$=-1;} 
+			| float_constant	{  insV(); codegencon();} 
+			| character_constant{  insV(); codegencon();$$=1; };
 
 %%
 
@@ -403,6 +408,7 @@ void printCT();
 struct stack
 {
 	char value[100];
+	int labelvalue;
 }s[100],label[100];
 
 
@@ -542,12 +548,12 @@ void codeassign()
 
 void label1()
 {
-	lno++;
 	strcpy(temp,"L");
 	char buffer[100];
 	itoa(lno,buffer,10);
 	strcat(temp,buffer);
 	printf("IF not %s GoTo %s\n",s[top].value,temp);
+	label[++ltop].labelvalue = lno++;
 }
 
 void label2()
@@ -556,17 +562,23 @@ void label2()
 	char buffer[100];
 	itoa(lno,buffer,10);
 	strcat(temp,buffer);
+	printf("GoTo %s\n",temp);
+	strcpy(temp,"L");
+	itoa(label[ltop].labelvalue,buffer,10);
+	strcat(temp,buffer);
 	printf("%s:\n",temp);
-	lno--;
+	ltop--;
+	label[++ltop].labelvalue=lno++;
 }
 
 void label3()
 {
 	strcpy(temp,"L");
 	char buffer[100];
-	itoa(lno-1,buffer,10);
+	itoa(label[ltop].labelvalue,buffer,10);
 	strcat(temp,buffer);
-	printf("GoTo %s:\n",temp);
+	printf("%s:\n",temp);
+	ltop--;
 	
 }
 
@@ -577,7 +589,56 @@ void label4()
 	itoa(lno,buffer,10);
 	strcat(temp,buffer);
 	printf("%s:\n",temp);
+	label[++ltop].labelvalue = lno++;
 }
+
+
+void label5()
+{
+	strcpy(temp,"L");
+	char buffer[100];
+	itoa(label[ltop-1].labelvalue,buffer,10);
+	strcat(temp,buffer);
+	printf("GoTo %s:\n",temp);
+	strcpy(temp,"L");
+	itoa(label[ltop].labelvalue,buffer,10);
+	strcat(temp,buffer);
+	printf("%s:\n",temp);
+	ltop = ltop - 2;
+    
+   
+}
+
+void funcgen()
+{
+	printf("func begin %s\n",currfunc);
+}
+
+void funcgenend()
+{
+	printf("func end\n\n");
+}
+
+void arggen(int i)
+{
+    if(i==1)
+    {
+	printf("refparam %s\n", curid);
+	}
+	else
+	{
+	printf("refparam %s\n", curval);
+	}
+}
+
+void callgen()
+{
+	printf("refparam result\n");
+	printf("call %s, %d\n",currfunccall,call_params_count);
+}
+
+
+
 int main(int argc , char **argv)
 {
 	yyin = fopen(argv[1], "r");
