@@ -17,7 +17,8 @@ int main()
         a--;
     }
 
-    do {
+    while(a<10)
+    {
         a++;
-    }while(a<10);
+    }
 }

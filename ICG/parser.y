@@ -358,7 +358,7 @@ mutable
 
 immutable 
 			: '(' expression ')' {if($2==1) $$=1; else $$=-1;}
-			| call 
+			| call {if($1==-1) $$=-1; else $$=1;}
 			| constant {if($1==1) $$=1; else $$=-1;};
 
 call
@@ -367,7 +367,15 @@ call
 			             { printf("Function not declared"); exit(0);} 
 			             insertSTF(curid); 
 						 strcpy(currfunccall,curid);
-			             } arguments ')' 
+						 if(gettype(curid,0)=='i' || gettype(curid,1)== 'c')
+						 {
+			             $$ = 1;
+			             }
+			             else
+			             $$ = -1;
+
+			             } 
+			             arguments ')' 
 						 { if(strcmp(currfunccall,"printf"))
 							{ 
 								if(getSTparamscount(currfunccall)!=call_params_count)
@@ -634,6 +642,7 @@ void arggen(int i)
 void callgen()
 {
 	printf("refparam result\n");
+	push("result");
 	printf("call %s, %d\n",currfunccall,call_params_count);
 }
 
@@ -644,7 +653,7 @@ int main(int argc , char **argv)
 	yyin = fopen(argv[1], "r");
 	yyparse();
 
-	/*if(flag == 0)
+	if(flag == 0)
 	{
 		printf(ANSI_COLOR_GREEN "Status: Parsing Complete - Valid" ANSI_COLOR_RESET "\n");
 		printf("%30s" ANSI_COLOR_CYAN "SYMBOL TABLE" ANSI_COLOR_RESET "\n", " ");
@@ -654,7 +663,7 @@ int main(int argc , char **argv)
 		printf("\n\n%30s" ANSI_COLOR_CYAN "CONSTANT TABLE" ANSI_COLOR_RESET "\n", " ");
 		printf("%30s %s\n", " ", "--------------");
 		printCT();
-	}*/
+	}
 }
 
 void yyerror(char *s)

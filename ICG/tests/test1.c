@@ -14,6 +14,7 @@ void main()
     char ch;//Character Datatype
     int x;
     int a[10];
+    i = myfunc(n);
     for (i=0;i<10;i++){
         if(i<10){
             int x;
