@@ -211,7 +211,7 @@ conditional_statements
 
 conditional_statements_breakup
 			: ELSE statement {label3();}
-			| ;
+			| {label3();};
 
 iterative_statements 
 			: WHILE '(' {label4();} simple_expression ')' {label1();if($4!=1){printf("Condition checking is not of type int\n");exit(0);}} statement {label5();} 
