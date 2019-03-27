@@ -216,7 +216,7 @@ conditional_statements_breakup
 iterative_statements 
 			: WHILE '(' {label4();} simple_expression ')' {label1();if($4!=1){printf("Condition checking is not of type int\n");exit(0);}} statement {label5();} 
 			| FOR '(' expression ';' {label4();} simple_expression ';' {label1();if($6!=1){printf("Condition checking is not of type int\n");exit(0);}} expression ')'statement {label5();} 
-			| DO statement WHILE '(' simple_expression ')'{if($5!=1){printf("Condition checking is not of type int\n");exit(0);}} ';';
+			| {label4();}DO statement WHILE '(' simple_expression ')'{label1();label5();if($6!=1){printf("Condition checking is not of type int\n");exit(0);}} ';';
 return_statement 
 			: RETURN ';' {if(strcmp(currfunctype,"void")) {printf("Returning void of a non-void function\n"); exit(0);}}
 			| RETURN expression ';' { 	if(!strcmp(currfunctype, "void"))
