@@ -32,7 +32,6 @@
 	}CT[1001];
 
 	int currnest = 0;
-	int params_count = 0;
 	extern int yylval;
 
 	int hash(char *str)
@@ -207,13 +206,14 @@
 		}
 	}
 
-	void insertSTparamscount(char *s, int count)
+	void insertSTparamscount(char *s, int count1)
 	{
+
 		for(int i = 0 ; i < 1001 ; i++)
 		{
 			if(strcmp(ST[i].name,s)==0 )
 			{
-				ST[i].params_count = count;
+				ST[i].params_count = count1;
 			}
 		}
 	}
@@ -227,7 +227,7 @@
 				return ST[i].params_count;
 			}
 		}
-		return -2;
+		return -1;
 	}
 
 	void insertSTF(char *s)

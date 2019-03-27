@@ -53,8 +53,8 @@
 	void arggen();
 	void callgen();
 
-	extern int params_count;
-	int call_params_count;
+	int params_count=0;
+	int call_params_count=0;
 	int top = 0,count=0,ltop=0,lno=0;
 	char temp[3] = "t";
 %}
@@ -167,13 +167,13 @@ function_declaration_type
 			: type_specifier identifier '('  { strcpy(currfunctype, curtype); strcpy(currfunc, curid); check_duplicate(curid); insertSTF(curid); ins(); };
 
 function_declaration_param_statement
-			: params ')' {funcgen();} statement {funcgenend();};
+			: {params_count=0;}params ')' {funcgen();} statement {funcgenend();};
 
 params 
-			: parameters_list | ;
+			: parameters_list { insertSTparamscount(currfunc, params_count); }| { insertSTparamscount(currfunc, params_count); };
 
 parameters_list 
-			: type_specifier { check_params(curtype); } parameters_identifier_list { insertSTparamscount(currfunc, params_count); };
+			: type_specifier { check_params(curtype);} parameters_identifier_list ;
 
 parameters_identifier_list 
 			: param_identifier parameters_identifier_list_breakup;
@@ -215,7 +215,7 @@ conditional_statements_breakup
 
 iterative_statements 
 			: WHILE '(' {label4();} simple_expression ')' {label1();if($4!=1){printf("Condition checking is not of type int\n");exit(0);}} statement {label5();} 
-			| FOR '(' expression ';' {label4();}simple_expression ';' {label1();if($6!=1){printf("Condition checking is not of type int\n");exit(0);}} expression ')'statement {label5();} 
+			| FOR '(' expression ';' {label4();} simple_expression ';' {label1();if($6!=1){printf("Condition checking is not of type int\n");exit(0);}} expression ')'statement {label5();} 
 			| DO statement WHILE '(' simple_expression ')'{if($5!=1){printf("Condition checking is not of type int\n");exit(0);}} ';';
 return_statement 
 			: RETURN ';' {if(strcmp(currfunctype,"void")) {printf("Returning void of a non-void function\n"); exit(0);}}
@@ -363,6 +363,7 @@ immutable
 
 call
 			: identifier '('{
+
 			             if(!check_declaration(curid, "Function"))
 			             { printf("Function not declared"); exit(0);} 
 			             insertSTF(curid); 
@@ -373,7 +374,7 @@ call
 			             }
 			             else
 			             $$ = -1;
-
+                         call_params_count=0;
 			             } 
 			             arguments ')' 
 						 { if(strcmp(currfunccall,"printf"))
