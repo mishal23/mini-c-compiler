@@ -1,13 +1,11 @@
 # Mini C-Compiler
 
 - Codes pertaining to projects for Compiler Design Lab for Course CO351 - Compiler Design Lab
-
 - It comprised of four phases:
-
-1) Lexical Analyzer
-2) Parser
-3) Semantic Analyzer
-4) Intermediate Code Generation
+  - Lexical Analyzer
+  - Parser
+  - Semantic Analyzer
+  - Intermediate Code Generation
 
 ## Team Members
 
