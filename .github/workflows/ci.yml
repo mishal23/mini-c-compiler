@@ -20,6 +20,5 @@ jobs:
 
       - name: Run a multi-line script
         run: |
-          sudo apt-get update
-          sudo apt-get install flex,
+          sudo apt-get update,
           sudo apt-get install bison.
