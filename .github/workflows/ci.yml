@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
       - uses: actions/checkout@v2
@@ -20,5 +20,6 @@ jobs:
 
       - name: Run a multi-line script
         run: |
+          sudo apt-get update
           sudo apt-get install flex,
           sudo apt-get install bison.
